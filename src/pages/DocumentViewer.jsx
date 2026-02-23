@@ -16,6 +16,8 @@ import ConfidenceOverview from "@/components/viewer/ConfidenceOverview";
 import TrustMeter from "@/components/trust/TrustMeter";
 import CorrectionWorkflow from "@/components/correction/CorrectionWorkflow";
 import ConfidenceHeatmap from "@/components/trust/ConfidenceHeatmap";
+import HandwritingOverlay from "@/components/viewer/HandwritingOverlay";
+import HandwritingPanel from "@/components/viewer/HandwritingPanel";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -151,6 +153,15 @@ export default function DocumentViewer() {
                 </div>
               </div>
             )}
+
+            {/* Handwriting overlay */}
+            {(activeLayers.includes("original") || activeLayers.includes("enhanced")) && document.handwriting_regions && (
+              <HandwritingOverlay 
+                regions={document.handwriting_regions}
+                imageWidth={800}
+                imageHeight={1000}
+              />
+            )}
           </div>
         </div>
 
@@ -177,12 +188,16 @@ export default function DocumentViewer() {
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full bg-slate-100 mb-4">
                 <TabsTrigger value="entities" className="flex-1 text-xs">Entities</TabsTrigger>
+                <TabsTrigger value="handwriting" className="flex-1 text-xs">Handwriting</TabsTrigger>
                 <TabsTrigger value="trust" className="flex-1 text-xs">Trust</TabsTrigger>
                 <TabsTrigger value="forensic" className="flex-1 text-xs">Forensic</TabsTrigger>
                 <TabsTrigger value="data" className="flex-1 text-xs">Data</TabsTrigger>
               </TabsList>
               <TabsContent value="entities">
                 <EntityPanel entities={document.extracted_entities} anomalies={document.anomalies} />
+              </TabsContent>
+              <TabsContent value="handwriting">
+                <HandwritingPanel regions={document.handwriting_regions} />
               </TabsContent>
               <TabsContent value="trust">
                 <ConfidenceHeatmap 

@@ -18,6 +18,7 @@ const navItems = [
   { name: "Upload", icon: Upload, page: "Upload" },
   { name: "Documents", icon: FileSearch, page: "Documents" },
   { name: "Compare", icon: GitCompare, page: "Compare" },
+  { name: "Architecture", icon: Layers, page: "Architecture" },
 ];
 
 export default function Layout({ children, currentPageName }) {

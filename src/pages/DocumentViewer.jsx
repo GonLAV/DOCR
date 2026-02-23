@@ -13,6 +13,9 @@ import EntityPanel from "@/components/viewer/EntityPanel";
 import ForensicPanel from "@/components/viewer/ForensicPanel";
 import StructuredDataPanel from "@/components/viewer/StructuredDataPanel";
 import ConfidenceOverview from "@/components/viewer/ConfidenceOverview";
+import TrustMeter from "@/components/trust/TrustMeter";
+import CorrectionWorkflow from "@/components/correction/CorrectionWorkflow";
+import ConfidenceHeatmap from "@/components/trust/ConfidenceHeatmap";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -27,6 +30,14 @@ export default function DocumentViewer() {
     enabled: !!docId,
     refetchInterval: (data) => data?.status === "completed" || data?.status === "failed" ? false : 3000,
   });
+
+  const { data: trustScores = [] } = useQuery({
+    queryKey: ["trustScore", docId],
+    queryFn: () => base44.entities.TrustScore.filter({ document_id: docId }),
+    enabled: !!docId && document?.status === "completed",
+  });
+
+  const trustScore = trustScores[0];
 
   const toggleLayer = (layer) => {
     setActiveLayers(prev =>
@@ -151,19 +162,38 @@ export default function DocumentViewer() {
                 <ConfidenceOverview document={document} />
               </div>
             )}
+            {trustScore && (
+              <div className="mb-4">
+                <TrustMeter trustScore={trustScore} />
+              </div>
+            )}
+            
+            {document.status === "completed" && trustScore && (
+              <div className="mb-4">
+                <CorrectionWorkflow document={document} trustScore={trustScore} />
+              </div>
+            )}
+
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full bg-slate-100 mb-4">
                 <TabsTrigger value="entities" className="flex-1 text-xs">Entities</TabsTrigger>
+                <TabsTrigger value="trust" className="flex-1 text-xs">Trust</TabsTrigger>
                 <TabsTrigger value="forensic" className="flex-1 text-xs">Forensic</TabsTrigger>
-                <TabsTrigger value="structured" className="flex-1 text-xs">Data</TabsTrigger>
+                <TabsTrigger value="data" className="flex-1 text-xs">Data</TabsTrigger>
               </TabsList>
               <TabsContent value="entities">
                 <EntityPanel entities={document.extracted_entities} anomalies={document.anomalies} />
               </TabsContent>
+              <TabsContent value="trust">
+                <ConfidenceHeatmap 
+                  document={document} 
+                  consensusData={document.structured_data?.consensus}
+                />
+              </TabsContent>
               <TabsContent value="forensic">
                 <ForensicPanel document={document} />
               </TabsContent>
-              <TabsContent value="structured">
+              <TabsContent value="data">
                 <StructuredDataPanel document={document} />
               </TabsContent>
             </Tabs>

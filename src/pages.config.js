@@ -52,6 +52,7 @@ import Upload from './pages/Upload';
 import Documents from './pages/Documents';
 import DocumentViewer from './pages/DocumentViewer';
 import Compare from './pages/Compare';
+import Architecture from './pages/Architecture';
 import __Layout from './Layout.jsx';
 
 
@@ -61,6 +62,7 @@ export const PAGES = {
     "Documents": Documents,
     "DocumentViewer": DocumentViewer,
     "Compare": Compare,
+    "Architecture": Architecture,
 }
 
 export const pagesConfig = {

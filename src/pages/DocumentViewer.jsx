@@ -26,6 +26,7 @@ import TagManager from "@/components/tags/TagManager";
 import CommentThread from "@/components/collaboration/CommentThread";
 import AnnotationTool from "@/components/collaboration/AnnotationTool";
 import VersionHistory from "@/components/collaboration/VersionHistory";
+import ActiveUsers from "@/components/collaboration/ActiveUsers";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -127,6 +128,7 @@ export default function DocumentViewer() {
         {document.pipeline_stage && (
           <PipelineStages currentStage={document.pipeline_stage} />
         )}
+        <ActiveUsers document={document} />
         <LayerToggle activeLayers={activeLayers} onToggle={toggleLayer} />
       </div>
 

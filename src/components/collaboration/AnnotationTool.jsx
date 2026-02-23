@@ -35,6 +35,16 @@ export default function AnnotationTool({ document, imageUrl }) {
     }
   });
 
+  // Real-time subscription for annotations
+  React.useEffect(() => {
+    const unsubscribe = base44.entities.DocumentAnnotation.subscribe((event) => {
+      if (event.data?.document_id === document.id) {
+        queryClient.invalidateQueries({ queryKey: ["annotations", document.id] });
+      }
+    });
+    return unsubscribe;
+  }, [document.id, queryClient]);
+
   const { data: currentUser } = useQuery({
     queryKey: ["currentUser"],
     queryFn: () => base44.auth.me()

@@ -1,6 +1,6 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { History, GitBranch, User, Clock } from "lucide-react";
@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 
 export default function VersionHistory({ document }) {
+  const queryClient = useQueryClient();
   const { data: versions = [] } = useQuery({
     queryKey: ["versions", document.id],
     queryFn: async () => {
@@ -17,6 +18,16 @@ export default function VersionHistory({ document }) {
       return allVersions;
     }
   });
+
+  // Real-time subscription for version history
+  React.useEffect(() => {
+    const unsubscribe = base44.entities.DocumentVersion.subscribe((event) => {
+      if (event.data?.document_id === document.id) {
+        queryClient.invalidateQueries({ queryKey: ["versions", document.id] });
+      }
+    });
+    return unsubscribe;
+  }, [document.id, queryClient]);
 
   const changeTypeColors = {
     created: "bg-blue-500",

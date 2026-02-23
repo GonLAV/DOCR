@@ -24,6 +24,16 @@ export default function CommentThread({ document }) {
     }
   });
 
+  // Real-time subscription for comments
+  React.useEffect(() => {
+    const unsubscribe = base44.entities.DocumentComment.subscribe((event) => {
+      if (event.data?.document_id === document.id) {
+        queryClient.invalidateQueries({ queryKey: ["comments", document.id] });
+      }
+    });
+    return unsubscribe;
+  }, [document.id, queryClient]);
+
   const { data: currentUser } = useQuery({
     queryKey: ["currentUser"],
     queryFn: () => base44.auth.me()

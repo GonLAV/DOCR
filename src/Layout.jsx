@@ -22,6 +22,7 @@ const navItems = [
   { name: "Pipeline", icon: Workflow, page: "Pipeline", gradient: "from-orange-500 to-red-500" },
   { name: "Upload", icon: Upload, page: "Upload", gradient: "from-pink-500 to-rose-500" },
   { name: "Documents", icon: FileSearch, page: "Documents", gradient: "from-violet-500 to-purple-500" },
+  { name: "Batch Processing", icon: Settings, page: "BatchProcessing", gradient: "from-fuchsia-500 to-purple-500" },
   { name: "Compare", icon: GitCompare, page: "Compare", gradient: "from-cyan-500 to-blue-500" },
 ];
 

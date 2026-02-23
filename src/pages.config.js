@@ -54,6 +54,7 @@ import DocumentViewer from './pages/DocumentViewer';
 import Compare from './pages/Compare';
 import Architecture from './pages/Architecture';
 import Pipeline from './pages/Pipeline';
+import Features from './pages/Features';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +66,7 @@ export const PAGES = {
     "Compare": Compare,
     "Architecture": Architecture,
     "Pipeline": Pipeline,
+    "Features": Features,
 }
 
 export const pagesConfig = {

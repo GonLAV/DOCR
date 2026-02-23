@@ -51,6 +51,7 @@ import Architecture from './pages/Architecture';
 import BatchProcessing from './pages/BatchProcessing';
 import Compare from './pages/Compare';
 import Dashboard from './pages/Dashboard';
+import DocumentTypeConfiguration from './pages/DocumentTypeConfiguration';
 import DocumentViewer from './pages/DocumentViewer';
 import Documents from './pages/Documents';
 import Features from './pages/Features';
@@ -58,7 +59,7 @@ import Pipeline from './pages/Pipeline';
 import SystemDesign from './pages/SystemDesign';
 import Upload from './pages/Upload';
 import Vision from './pages/Vision';
-import DocumentTypeConfiguration from './pages/DocumentTypeConfiguration';
+import ExternalSources from './pages/ExternalSources';
 import __Layout from './Layout.jsx';
 
 
@@ -67,6 +68,7 @@ export const PAGES = {
     "BatchProcessing": BatchProcessing,
     "Compare": Compare,
     "Dashboard": Dashboard,
+    "DocumentTypeConfiguration": DocumentTypeConfiguration,
     "DocumentViewer": DocumentViewer,
     "Documents": Documents,
     "Features": Features,
@@ -74,7 +76,7 @@ export const PAGES = {
     "SystemDesign": SystemDesign,
     "Upload": Upload,
     "Vision": Vision,
-    "DocumentTypeConfiguration": DocumentTypeConfiguration,
+    "ExternalSources": ExternalSources,
 }
 
 export const pagesConfig = {

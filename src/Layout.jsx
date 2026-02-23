@@ -26,6 +26,7 @@ const navItems = [
   { name: "Batch Processing", icon: Settings, page: "BatchProcessing", gradient: "from-fuchsia-500 to-purple-500" },
   { name: "Compare", icon: GitCompare, page: "Compare", gradient: "from-cyan-500 to-blue-500" },
   { name: "Config", icon: Settings, page: "DocumentTypeConfiguration", gradient: "from-slate-500 to-gray-500", adminOnly: true },
+  { name: "External Sources", icon: Settings, page: "ExternalSources", gradient: "from-teal-500 to-emerald-500", adminOnly: true },
 ];
 
 export default function Layout({ children, currentPageName }) {

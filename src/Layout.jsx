@@ -96,11 +96,11 @@ export default function Layout({ children, currentPageName }) {
                   className="group relative block"
                 >
                   <div className={`
-                    relative flex items-center gap-3 px-4 py-3 rounded-xl
+                    relative flex items-center gap-3 px-4 py-3.5 rounded-xl
                     transition-all duration-300 overflow-hidden
                     ${isActive 
-                      ? 'glass-strong neon-blue text-white' 
-                      : 'text-gray-300 hover:text-white hover:glass'
+                      ? 'glass-ultra neon-blue text-white shadow-lg shadow-purple-500/20' 
+                      : 'text-gray-300 hover:text-white hover:glass-strong hover:shadow-lg hover:shadow-indigo-500/10'
                     }
                   `}>
                     {/* Active indicator gradient */}
@@ -142,13 +142,15 @@ export default function Layout({ children, currentPageName }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setCollapsed(!collapsed)}
-            className="w-full py-2 glass-strong rounded-xl text-white hover:neon-blue transition-all duration-300"
+            className="w-full py-3 glass-ultra rounded-xl text-white hover:neon-purple transition-all duration-300 shadow-lg hover:shadow-purple-500/30"
           >
             <motion.div
               animate={{ rotate: collapsed ? 180 : 0 }}
               transition={{ duration: 0.3 }}
+              className="flex items-center justify-center gap-2"
             >
-              <Settings className="w-5 h-5 mx-auto" />
+              <Settings className="w-5 h-5" />
+              {!collapsed && <span className="text-sm font-semibold">Toggle Menu</span>}
             </motion.div>
           </motion.button>
         </div>

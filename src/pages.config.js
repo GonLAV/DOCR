@@ -60,6 +60,7 @@ import SystemDesign from './pages/SystemDesign';
 import Upload from './pages/Upload';
 import Vision from './pages/Vision';
 import ExternalSources from './pages/ExternalSources';
+import Analytics from './pages/Analytics';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +78,7 @@ export const PAGES = {
     "Upload": Upload,
     "Vision": Vision,
     "ExternalSources": ExternalSources,
+    "Analytics": Analytics,
 }
 
 export const pagesConfig = {

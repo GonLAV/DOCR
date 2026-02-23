@@ -11,7 +11,8 @@ import {
   Layers,
   Workflow,
   Sparkles,
-  Zap
+  Zap,
+  BarChart3
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -23,6 +24,7 @@ const navItems = [
   { name: "Pipeline", icon: Workflow, page: "Pipeline", gradient: "from-orange-500 to-red-500" },
   { name: "Upload", icon: Upload, page: "Upload", gradient: "from-pink-500 to-rose-500" },
   { name: "Documents", icon: FileSearch, page: "Documents", gradient: "from-violet-500 to-purple-500" },
+  { name: "Analytics", icon: BarChart3, page: "Analytics", gradient: "from-amber-500 to-orange-500" },
   { name: "Batch Processing", icon: Settings, page: "BatchProcessing", gradient: "from-fuchsia-500 to-purple-500" },
   { name: "Compare", icon: GitCompare, page: "Compare", gradient: "from-cyan-500 to-blue-500" },
   { name: "Config", icon: Settings, page: "DocumentTypeConfiguration", gradient: "from-slate-500 to-gray-500", adminOnly: true },

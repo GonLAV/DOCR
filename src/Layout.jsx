@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import ParticleBackground from "@/components/effects/ParticleBackground";
+import NotificationCenter from "@/components/notifications/NotificationCenter";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard", gradient: "from-blue-500 to-cyan-500" },
@@ -136,8 +138,12 @@ export default function Layout({ children, currentPageName }) {
           })}
         </nav>
 
-        {/* Collapse toggle */}
-        <div className="p-4 border-t border-slate-700/30">
+        {/* Theme & Settings */}
+        <div className="p-4 border-t border-slate-700/30 space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <ThemeToggle />
+            <NotificationCenter />
+          </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

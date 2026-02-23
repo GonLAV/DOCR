@@ -1,16 +1,74 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, TrendingUp, AlertCircle, CheckCircle2, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileText, TrendingUp, AlertCircle, CheckCircle2, Sparkles, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 
-export default function SummaryCard({ summary }) {
+export default function SummaryCard({ summary, documentId }) {
+  const [summaryLength, setSummaryLength] = useState("medium");
+  const queryClient = useQueryClient();
+
+  const generateSummaryMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await base44.functions.invoke("generateDocumentSummary", {
+        document_id: documentId,
+        length: summaryLength
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["document", documentId] });
+      toast.success("AI summary generated successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to generate summary: " + error.message);
+    }
+  });
   if (!summary) {
     return (
       <Card className="glass-strong border border-white/20">
-        <CardContent className="p-4 text-center text-gray-400">
-          <Sparkles className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p className="text-xs">No AI summary generated yet</p>
+        <CardContent className="p-4">
+          <div className="text-center text-gray-400 mb-4">
+            <Sparkles className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-xs mb-3">No AI summary generated yet</p>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <label className="text-[10px] text-gray-400 mb-1.5 block">Summary Length</label>
+              <Select value={summaryLength} onValueChange={setSummaryLength}>
+                <SelectTrigger className="bg-slate-800/50 border-slate-700/40 text-gray-100 h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="short">Short (Quick Overview)</SelectItem>
+                  <SelectItem value="medium">Medium (Balanced)</SelectItem>
+                  <SelectItem value="detailed">Detailed (Comprehensive)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button
+              onClick={() => generateSummaryMutation.mutate()}
+              disabled={generateSummaryMutation.isPending}
+              className="w-full gap-2 h-8 text-xs"
+            >
+              {generateSummaryMutation.isPending ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Generate Summary
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -19,7 +77,7 @@ export default function SummaryCard({ summary }) {
   return (
     <Card className="glass-strong border border-cyan-500/30">
       <CardContent className="p-5 space-y-4">
-        {/* Header */}
+        {/* Header with Regenerate */}
         <div className="flex items-center gap-2 mb-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
@@ -29,6 +87,28 @@ export default function SummaryCard({ summary }) {
             <p className="text-[10px] text-gray-400">
               Generated {new Date(summary.generated_at).toLocaleDateString()}
             </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Select value={summaryLength} onValueChange={setSummaryLength}>
+              <SelectTrigger className="bg-slate-800/50 border-slate-700/40 text-gray-100 h-7 text-[10px] w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="short">Short</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="detailed">Detailed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => generateSummaryMutation.mutate()}
+              disabled={generateSummaryMutation.isPending}
+              className="h-7 w-7 p-0 text-cyan-400 hover:text-cyan-300"
+              title="Regenerate summary"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${generateSummaryMutation.isPending ? "animate-spin" : ""}`} />
+            </Button>
           </div>
         </div>
 

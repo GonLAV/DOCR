@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { document_id } = await req.json();
+    const { document_id, length = "medium" } = await req.json();
 
     if (!document_id) {
       return Response.json({ error: 'Missing document_id' }, { status: 400 });
@@ -35,19 +35,43 @@ Deno.serve(async (req) => {
       extracted_text_preview: document.extracted_text?.substring(0, 500)
     };
 
+    // Define prompts based on length
+    const lengthConfig = {
+      short: {
+        overview_sentences: "1-2 sentences",
+        entities_count: 3,
+        recommendations_count: 2,
+        detail_level: "brief and high-level"
+      },
+      medium: {
+        overview_sentences: "2-3 sentences",
+        entities_count: 5,
+        recommendations_count: 3,
+        detail_level: "concise yet comprehensive"
+      },
+      detailed: {
+        overview_sentences: "3-4 sentences with context",
+        entities_count: 7,
+        recommendations_count: 5,
+        detail_level: "detailed and thorough"
+      }
+    };
+
+    const config = lengthConfig[length] || lengthConfig.medium;
+
     // Generate summary using AI
     const summary = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an expert document analyst. Generate a concise executive summary for the following processed document.
+      prompt: `You are an expert document analyst. Generate a ${config.detail_level} executive summary for the following processed document.
 
 Document Data:
 ${JSON.stringify(documentContext, null, 2)}
 
-Generate a comprehensive but concise summary that includes:
-1. A brief 2-3 sentence overview of the document
-2. Key entities (top 5 most important extracted fields)
+Generate a summary that includes:
+1. A ${config.overview_sentences} overview of the document
+2. Key entities (top ${config.entities_count} most important extracted fields)
 3. Confidence level summary (explain the overall confidence and any concerns)
 4. Anomalies summary (if any issues were detected, explain them clearly)
-5. Recommendations (2-3 actionable next steps or items needing attention)
+5. Recommendations (${config.recommendations_count} actionable next steps or items needing attention)
 
 Keep the language professional, clear, and suitable for executives or legal reviewers.`,
       response_json_schema: {

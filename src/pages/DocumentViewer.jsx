@@ -263,7 +263,7 @@ export default function DocumentViewer() {
             {/* AI Summary */}
             {document.status === "completed" && (
               <div className="mb-4">
-                <SummaryCard summary={document.ai_summary} />
+                <SummaryCard summary={document.ai_summary} documentId={document.id} />
               </div>
             )}
 

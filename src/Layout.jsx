@@ -16,7 +16,8 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
-  { name: "System Design", icon: Settings, page: "SystemDesign" },
+  { name: "Vision", icon: Settings, page: "Vision" },
+  { name: "System Design", icon: Layers, page: "SystemDesign" },
   { name: "Features", icon: Layers, page: "Features" },
   { name: "Pipeline", icon: Workflow, page: "Pipeline" },
   { name: "Upload", icon: Upload, page: "Upload" },

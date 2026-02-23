@@ -56,6 +56,7 @@ import Architecture from './pages/Architecture';
 import Pipeline from './pages/Pipeline';
 import Features from './pages/Features';
 import SystemDesign from './pages/SystemDesign';
+import Vision from './pages/Vision';
 import __Layout from './Layout.jsx';
 
 
@@ -69,6 +70,7 @@ export const PAGES = {
     "Pipeline": Pipeline,
     "Features": Features,
     "SystemDesign": SystemDesign,
+    "Vision": Vision,
 }
 
 export const pagesConfig = {

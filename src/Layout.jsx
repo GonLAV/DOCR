@@ -18,6 +18,7 @@ const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
   { name: "Vision", icon: Settings, page: "Vision" },
   { name: "System Design", icon: Layers, page: "SystemDesign" },
+  { name: "Implementation", icon: Settings, page: "Implementation" },
   { name: "Features", icon: Layers, page: "Features" },
   { name: "Pipeline", icon: Workflow, page: "Pipeline" },
   { name: "Upload", icon: Upload, page: "Upload" },

@@ -16,12 +16,12 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
-  { name: "Features", icon: Settings, page: "Features" },
+  { name: "System Design", icon: Settings, page: "SystemDesign" },
+  { name: "Features", icon: Layers, page: "Features" },
   { name: "Pipeline", icon: Workflow, page: "Pipeline" },
   { name: "Upload", icon: Upload, page: "Upload" },
   { name: "Documents", icon: FileSearch, page: "Documents" },
   { name: "Compare", icon: GitCompare, page: "Compare" },
-  { name: "Architecture", icon: Layers, page: "Architecture" },
 ];
 
 export default function Layout({ children, currentPageName }) {

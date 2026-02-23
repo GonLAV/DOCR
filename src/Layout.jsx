@@ -54,24 +54,24 @@ export default function Layout({ children, currentPageName }) {
           x: 0
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="relative glass-dark border-r border-white/10 flex flex-col shrink-0"
+        className="relative glass-dark border-r border-slate-700/30 flex flex-col shrink-0"
       >
         {/* Logo with Neon Effect */}
-        <div className="h-20 flex items-center justify-center px-5 border-b border-white/10">
+        <div className="h-20 flex items-center justify-center px-5 border-b border-slate-700/30">
           <motion.div
             whileHover={{ scale: 1.05 }}
             className="flex items-center gap-3"
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
-              <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-violet-500 rounded-2xl blur-lg opacity-60 animate-pulse"></div>
+              <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 via-violet-500 to-purple-600 flex items-center justify-center shadow-2xl">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
             </div>
             {!collapsed && (
               <div>
-                <h1 className="text-lg font-black text-white tracking-wider">DocIntel</h1>
-                <p className="text-[10px] text-cyan-300 font-semibold tracking-widest uppercase">AI Engine</p>
+                <h1 className="text-lg font-black text-gray-100 tracking-wider">DocIntel</h1>
+                <p className="text-[10px] text-blue-300 font-semibold tracking-widest uppercase">AI Engine</p>
               </div>
             )}
           </motion.div>
@@ -107,7 +107,7 @@ export default function Layout({ children, currentPageName }) {
                     {isActive && (
                       <motion.div
                         layoutId="activeNav"
-                        className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-20 rounded-xl`}
+                        className={`absolute inset-0 bg-gradient-to-r from-blue-600/20 to-violet-600/20 rounded-xl`}
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -137,12 +137,12 @@ export default function Layout({ children, currentPageName }) {
         </nav>
 
         {/* Collapse toggle */}
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-slate-700/30">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setCollapsed(!collapsed)}
-            className="w-full py-3 glass-ultra rounded-xl text-white hover:neon-purple transition-all duration-300 shadow-lg hover:shadow-purple-500/30"
+            className="w-full py-3 glass-ultra rounded-xl text-gray-100 hover:bg-slate-700/60 transition-all duration-300 shadow-lg hover:shadow-blue-500/20"
           >
             <motion.div
               animate={{ rotate: collapsed ? 180 : 0 }}
@@ -156,7 +156,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         {/* Decorative bottom gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-600/20 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-600/10 to-transparent pointer-events-none" />
       </motion.aside>
 
       {/* Main content with enhanced styling */}

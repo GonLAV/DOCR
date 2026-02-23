@@ -9,14 +9,14 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-indigo-500/30 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-500/50",
+          "border-blue-500/30 bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-blue-500/40",
         secondary:
-          "border-white/20 bg-white/10 backdrop-blur-md text-white shadow-white/20",
+          "border-slate-600/30 bg-slate-700/60 backdrop-blur-md text-gray-100 shadow-slate-700/40",
         destructive:
-          "border-red-500/30 bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-red-500/50",
-        outline: "border-white/30 text-white bg-white/5 backdrop-blur-sm hover:bg-white/10",
-        success: "border-emerald-500/30 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-500/50",
-        warning: "border-amber-500/30 bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-amber-500/50",
+          "border-rose-500/30 bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-rose-500/40",
+        outline: "border-slate-600/40 text-gray-100 bg-slate-800/40 backdrop-blur-sm hover:bg-slate-700/50",
+        success: "border-emerald-500/30 bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-500/40",
+        warning: "border-amber-500/30 bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-amber-500/40",
       },
     },
     defaultVariants: {

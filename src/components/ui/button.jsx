@@ -10,16 +10,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/60 hover:from-indigo-500 hover:to-purple-500 hover:-translate-y-0.5 border border-white/20",
+          "bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-lg shadow-blue-500/40 hover:shadow-xl hover:shadow-violet-500/50 hover:from-blue-500 hover:to-violet-500 hover:-translate-y-0.5 border border-blue-400/20",
         destructive:
-          "bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-lg shadow-red-500/50 hover:shadow-xl hover:shadow-red-500/60 hover:from-red-500 hover:to-pink-500 hover:-translate-y-0.5 border border-white/20",
+          "bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-lg shadow-rose-500/40 hover:shadow-xl hover:shadow-rose-500/50 hover:from-rose-500 hover:to-red-500 hover:-translate-y-0.5 border border-rose-400/20",
         outline:
-          "border-2 border-white/20 bg-white/5 backdrop-blur-sm text-white shadow-lg hover:bg-white/10 hover:border-white/30 hover:-translate-y-0.5 hover:shadow-xl",
+          "border-2 border-slate-600/40 bg-slate-800/50 backdrop-blur-sm text-gray-100 shadow-lg hover:bg-slate-700/60 hover:border-slate-500/50 hover:-translate-y-0.5 hover:shadow-xl",
         secondary:
-          "bg-white/10 backdrop-blur-md text-white shadow-lg border border-white/20 hover:bg-white/15 hover:border-white/30 hover:-translate-y-0.5 hover:shadow-xl",
-        ghost: "hover:bg-white/10 hover:text-white text-gray-300",
-        link: "text-purple-400 underline-offset-4 hover:underline hover:text-purple-300",
-        glow: "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/70 hover:from-cyan-500 hover:to-blue-500 hover:-translate-y-0.5 border border-cyan-400/30 animate-pulse-slow",
+          "bg-slate-700/60 backdrop-blur-md text-gray-100 shadow-lg border border-slate-600/40 hover:bg-slate-600/70 hover:border-slate-500/50 hover:-translate-y-0.5 hover:shadow-xl",
+        ghost: "hover:bg-slate-800/50 hover:text-gray-100 text-gray-400",
+        link: "text-blue-400 underline-offset-4 hover:underline hover:text-blue-300",
+        glow: "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/60 hover:from-cyan-500 hover:to-blue-500 hover:-translate-y-0.5 border border-cyan-400/20",
       },
       size: {
         default: "h-10 px-5 py-2.5",

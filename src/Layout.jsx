@@ -15,6 +15,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { motion } from "framer-motion";
+import ParticleBackground from "@/components/effects/ParticleBackground";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard", gradient: "from-blue-500 to-cyan-500" },
@@ -40,7 +41,10 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden relative">
+      <ParticleBackground />
+      <div className="scan-line"></div>
+      
       {/* Futuristic Sidebar */}
       <motion.aside
         initial={{ x: -300 }}
@@ -152,9 +156,9 @@ export default function Layout({ children, currentPageName }) {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-purple-600/20 to-transparent pointer-events-none" />
       </motion.aside>
 
-      {/* Main content with glass overlay */}
+      {/* Main content with enhanced styling */}
       <main className="flex-1 overflow-auto relative">
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 holographic opacity-30"></div>
         <div className="relative z-10">
           {children}
         </div>

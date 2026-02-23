@@ -9,6 +9,7 @@ export default function Upload() {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [processingDocs, setProcessingDocs] = useState([]);
+  const [enhancementMode, setEnhancementMode] = useState("new_file"); // "new_file" or "replace"
 
   const runPipeline = async (doc) => {
     const stages = ["preservation", "enhancement", "layout", "semantic", "confidence", "output"];
@@ -29,13 +30,33 @@ export default function Upload() {
       }
       
       if (stage === "enhancement") {
+        // Generate enhanced version
+        const enhancedImage = await base44.integrations.Core.GenerateImage({
+          prompt: `Enhance this scanned document image to professional quality:
+- Remove noise, scratches, stains, and artifacts
+- Improve contrast and sharpness
+- Straighten any skew or rotation
+- Enhance text clarity and readability
+- Preserve original content exactly without alterations
+- Output high-quality, clean document scan`,
+          existing_image_urls: [doc.original_file_url]
+        });
+
+        const enhancedUrl = enhancedImage.url;
+
         stageResult = {
+          enhanced_file_url: enhancedUrl,
           damage_assessment: {
             overall_condition: "moderate",
             detected_issues: ["slight_noise", "minor_skew"],
             severity: 0.3
           }
         };
+
+        // If replace mode, update original file URL
+        if (enhancementMode === "replace") {
+          stageResult.original_file_url = enhancedUrl;
+        }
       }
 
       if (stage === "confidence") {
@@ -172,6 +193,46 @@ Be thorough and detailed. Return structured data.`,
         <p className="text-sm text-slate-500 mt-1">
           Upload scanned documents for AI-powered analysis, restoration, and intelligence extraction
         </p>
+      </div>
+
+      {/* Enhancement Mode Selection */}
+      <div className="glass-strong border border-white/20 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Enhancement Settings</h3>
+        <div className="space-y-3">
+          <label className="flex items-start gap-3 p-4 glass rounded-xl cursor-pointer hover:glass-strong transition-all">
+            <input
+              type="radio"
+              name="enhancement"
+              value="new_file"
+              checked={enhancementMode === "new_file"}
+              onChange={(e) => setEnhancementMode(e.target.value)}
+              className="mt-1"
+            />
+            <div className="flex-1">
+              <div className="font-semibold text-white mb-1">Generate Enhanced Copy (Recommended)</div>
+              <p className="text-sm text-gray-300">
+                Creates a new enhanced version while preserving the original file. Best for forensic comparison and compliance.
+              </p>
+            </div>
+          </label>
+          
+          <label className="flex items-start gap-3 p-4 glass rounded-xl cursor-pointer hover:glass-strong transition-all">
+            <input
+              type="radio"
+              name="enhancement"
+              value="replace"
+              checked={enhancementMode === "replace"}
+              onChange={(e) => setEnhancementMode(e.target.value)}
+              className="mt-1"
+            />
+            <div className="flex-1">
+              <div className="font-semibold text-white mb-1">Replace with Enhanced Version</div>
+              <p className="text-sm text-gray-300">
+                Overwrites the original with the enhanced version. Use when storage optimization is priority.
+              </p>
+            </div>
+          </label>
+        </div>
       </div>
 
       <DropZone onFilesSelected={handleFilesSelected} isUploading={isUploading} />

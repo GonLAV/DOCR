@@ -33,7 +33,10 @@ export default function DocumentViewer() {
 
   const { data: document, isLoading } = useQuery({
     queryKey: ["document", docId],
-    queryFn: () => base44.entities.Document.list().then(docs => docs.find(d => d.id === docId)),
+    queryFn: async () => {
+      const docs = await base44.entities.Document.list();
+      return docs.find(d => d.id === docId);
+    },
     enabled: !!docId,
     refetchInterval: (data) => data?.status === "completed" || data?.status === "failed" ? false : 3000,
   });
@@ -52,10 +55,24 @@ export default function DocumentViewer() {
     );
   };
 
-  if (isLoading || !document) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!document) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-gray-900 mb-2">Document not found</p>
+          <p className="text-sm text-gray-500 mb-4">The document you're looking for doesn't exist or has been deleted.</p>
+          <Link to={createPageUrl("Documents")}>
+            <Button>Back to Documents</Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -87,13 +104,22 @@ export default function DocumentViewer() {
               </div>
             </div>
           </div>
-          {document.original_file_url && (
-            <a href={document.original_file_url} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
-                <Download className="w-3.5 h-3.5" /> Original
-              </Button>
-            </a>
-          )}
+          <div className="flex gap-2">
+            {document.original_file_url && (
+              <a href={document.original_file_url} download target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
+                  <Download className="w-3.5 h-3.5" /> Original
+                </Button>
+              </a>
+            )}
+            {document.enhanced_file_url && (
+              <a href={document.enhanced_file_url} download target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100">
+                  <Download className="w-3.5 h-3.5" /> Enhanced
+                </Button>
+              </a>
+            )}
+          </div>
         </div>
         {document.pipeline_stage && (
           <PipelineStages currentStage={document.pipeline_stage} />
@@ -105,35 +131,45 @@ export default function DocumentViewer() {
       <div className="flex-1 flex overflow-hidden">
         {/* Document Preview */}
         <div className="flex-1 bg-slate-100/50 p-6 overflow-auto flex items-start justify-center">
-          <div className="relative max-w-2xl w-full">
+          <div className="relative max-w-4xl w-full">
             {activeLayers.includes("original") && document.original_file_url && (
               <div className="layer-original">
                 {document.file_type === "pdf" ? (
                   <iframe
-                    src={document.original_file_url}
-                    className="w-full h-[800px] rounded-xl border border-slate-200 shadow-lg bg-white"
-                    title="Document"
+                    src={`${document.original_file_url}#view=FitH`}
+                    className="w-full min-h-[1200px] rounded-xl border border-slate-200 shadow-lg bg-white"
+                    title={`${document.title} - Original Document`}
+                    allow="fullscreen"
                   />
                 ) : (
                   <img
                     src={document.original_file_url}
-                    alt="Original document"
-                    className="w-full rounded-xl border border-slate-200 shadow-lg"
+                    alt={`${document.title} - Original`}
+                    className="w-full h-auto rounded-xl border border-slate-200 shadow-lg object-contain"
+                    loading="lazy"
                   />
                 )}
               </div>
             )}
 
             {activeLayers.includes("enhanced") && !activeLayers.includes("original") && document.enhanced_file_url && (
-              <img
-                src={document.enhanced_file_url}
-                alt="Enhanced document"
-                className="w-full rounded-xl border border-blue-200 shadow-lg"
-              />
+              <div className="layer-enhanced">
+                <img
+                  src={document.enhanced_file_url}
+                  alt={`${document.title} - Enhanced`}
+                  className="w-full h-auto rounded-xl border border-blue-200 shadow-lg object-contain"
+                  loading="lazy"
+                />
+              </div>
             )}
 
             {activeLayers.includes("ocr") && document.extracted_text && !activeLayers.includes("original") && !activeLayers.includes("enhanced") && (
-              <div className="p-8 bg-white rounded-xl border border-slate-200 shadow-lg">
+              <div className="p-8 bg-white rounded-xl border border-slate-200 shadow-lg max-h-[1200px] overflow-y-auto">
+                <div className="mb-4 pb-4 border-b border-slate-200">
+                  <Badge className="bg-blue-100 text-blue-700 text-xs">
+                    Extracted Text ({document.extracted_text.length} characters)
+                  </Badge>
+                </div>
                 <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed font-mono">
                   {document.extracted_text}
                 </p>
@@ -143,6 +179,23 @@ export default function DocumentViewer() {
             {!activeLayers.includes("original") && !activeLayers.includes("enhanced") && !activeLayers.includes("ocr") && (
               <div className="p-12 text-center text-slate-400 bg-white rounded-xl border border-slate-200">
                 <p className="text-sm">Enable a layer to view the document</p>
+              </div>
+            )}
+
+            {/* No file available warning */}
+            {activeLayers.includes("original") && !document.original_file_url && (
+              <div className="p-12 text-center bg-amber-50 rounded-xl border border-amber-200">
+                <p className="text-sm text-amber-700">Original file not available</p>
+              </div>
+            )}
+            {activeLayers.includes("enhanced") && !document.enhanced_file_url && (
+              <div className="p-12 text-center bg-amber-50 rounded-xl border border-amber-200">
+                <p className="text-sm text-amber-700">Enhanced file not available</p>
+              </div>
+            )}
+            {activeLayers.includes("ocr") && !document.extracted_text && (
+              <div className="p-12 text-center bg-amber-50 rounded-xl border border-amber-200">
+                <p className="text-sm text-amber-700">Extracted text not available</p>
               </div>
             )}
 
@@ -171,8 +224,37 @@ export default function DocumentViewer() {
         </div>
 
         {/* Side Panel */}
-        <div className="w-[380px] border-l border-slate-200 bg-white overflow-y-auto">
-          <div className="p-4">
+        <div className="w-[420px] border-l border-slate-200 bg-white overflow-y-auto">
+          <div className="p-4 space-y-4">
+            {/* Document Metadata */}
+            {document.file_type && (
+              <div className="glass-strong rounded-xl p-3 border border-white/20">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="text-gray-400">File Type</span>
+                    <p className="text-white font-semibold uppercase">{document.file_type}</p>
+                  </div>
+                  {document.confidence_score != null && (
+                    <div>
+                      <span className="text-gray-400">Confidence</span>
+                      <p className="text-white font-semibold">{document.confidence_score}%</p>
+                    </div>
+                  )}
+                  {document.processing_time_ms && (
+                    <div>
+                      <span className="text-gray-400">Processing Time</span>
+                      <p className="text-white font-semibold">{(document.processing_time_ms / 1000).toFixed(2)}s</p>
+                    </div>
+                  )}
+                  {document.extracted_text && (
+                    <div>
+                      <span className="text-gray-400">Text Length</span>
+                      <p className="text-white font-semibold">{document.extracted_text.length} chars</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
             {/* AI Summary */}
             {document.status === "completed" && (
               <div className="mb-4">

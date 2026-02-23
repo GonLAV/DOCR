@@ -199,11 +199,11 @@ export default function Compare() {
             </TabsContent>
 
             <TabsContent value="entities" className="space-y-4">
-              {/* Entity Comparison */}
+              {/* Entity Comparison with Semantic Similarity */}
               {result.entity_comparison && result.entity_comparison.length > 0 && (
                 <Card className="glass-strong border border-white/20">
                   <CardHeader>
-                    <CardTitle className="text-white">Entity Comparison</CardTitle>
+                    <CardTitle className="text-white">Entity Comparison with AI Semantic Analysis</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     {result.entity_comparison.map((entity, i) => (
@@ -212,13 +212,24 @@ export default function Compare() {
                       }`}>
                         <div className="flex items-start justify-between mb-2">
                           <span className="text-sm font-bold text-white">{entity.field}</span>
-                          <Badge className={`text-[10px] ${
-                            entity.match ? 'bg-emerald-500' : 'bg-amber-500'
-                          } text-white`}>
-                            {entity.match ? 'Match' : 'Different'} ({entity.confidence}%)
-                          </Badge>
+                          <div className="flex gap-2">
+                            {entity.semantic_similarity != null && (
+                              <Badge className={`text-[10px] ${
+                                entity.semantic_similarity >= 80 ? 'bg-purple-500' :
+                                entity.semantic_similarity >= 50 ? 'bg-blue-500' :
+                                'bg-gray-500'
+                              } text-white`}>
+                                Semantic: {entity.semantic_similarity}%
+                              </Badge>
+                            )}
+                            <Badge className={`text-[10px] ${
+                              entity.match ? 'bg-emerald-500' : 'bg-amber-500'
+                            } text-white`}>
+                              {entity.match ? 'Match' : 'Different'} ({entity.confidence}%)
+                            </Badge>
+                          </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-3 mb-2">
                           <div className="text-xs">
                             <div className="text-gray-400 mb-1">Doc A</div>
                             <div className="text-white">{entity.value_a}</div>
@@ -228,6 +239,11 @@ export default function Compare() {
                             <div className="text-white">{entity.value_b}</div>
                           </div>
                         </div>
+                        {entity.semantic_explanation && (
+                          <div className="pt-2 border-t border-white/10">
+                            <p className="text-xs text-purple-300 italic">{entity.semantic_explanation}</p>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </CardContent>
@@ -236,7 +252,11 @@ export default function Compare() {
             </TabsContent>
 
             <TabsContent value="semantic">
-              <SemanticDiffPanel semanticDifferences={result.semantic_differences} />
+              <SemanticDiffPanel 
+                semanticDifferences={result.semantic_differences}
+                textSnippetsSimilarity={result.text_snippets_similarity}
+                externalVerification={result.external_verification}
+              />
             </TabsContent>
 
             {comparisonMode === "forensic" && (

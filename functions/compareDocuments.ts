@@ -25,27 +25,28 @@ Deno.serve(async (req) => {
 
     let result = {};
 
-    // Visual & Content Comparison
+    // Visual & Content Comparison with AI-powered semantic similarity
     const contentAnalysis = await base44.integrations.Core.InvokeLLM({
-      prompt: `Perform a comprehensive comparison of these two documents:
+      prompt: `Perform a comprehensive comparison of these two documents with deep semantic analysis:
 
 Document A: "${docA.title}"
 Entities: ${JSON.stringify(docA.extracted_entities)}
-Text Preview: ${docA.extracted_text?.substring(0, 500)}
+Text Preview: ${docA.extracted_text?.substring(0, 1000)}
 Confidence: ${docA.confidence_score}%
 
 Document B: "${docB.title}"
 Entities: ${JSON.stringify(docB.extracted_entities)}
-Text Preview: ${docB.extracted_text?.substring(0, 500)}
+Text Preview: ${docB.extracted_text?.substring(0, 1000)}
 Confidence: ${docB.confidence_score}%
 
 Analyze:
 1. Text differences (character-level changes, additions, deletions)
 2. Layout differences (structure, formatting, page count)
-3. Entity matches and discrepancies
+3. Entity matches and discrepancies with semantic similarity scores (0-100)
 4. Semantic content differences (meaning changes beyond text)
-5. Confidence score comparison
-6. Overall verification score`,
+5. Text snippet semantic similarity analysis - compare key phrases and their meaning
+6. Confidence score comparison
+7. Overall verification score`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -74,7 +75,21 @@ Analyze:
                 value_a: { type: "string" },
                 value_b: { type: "string" },
                 match: { type: "boolean" },
-                confidence: { type: "number" }
+                confidence: { type: "number" },
+                semantic_similarity: { type: "number" },
+                semantic_explanation: { type: "string" }
+              }
+            }
+          },
+          text_snippets_similarity: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                snippet_a: { type: "string" },
+                snippet_b: { type: "string" },
+                similarity_score: { type: "number" },
+                semantic_relationship: { type: "string" }
               }
             }
           },

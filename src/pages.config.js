@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Analytics from './pages/Analytics';
 import Architecture from './pages/Architecture';
 import BatchProcessing from './pages/BatchProcessing';
 import Compare from './pages/Compare';
@@ -54,17 +55,17 @@ import Dashboard from './pages/Dashboard';
 import DocumentTypeConfiguration from './pages/DocumentTypeConfiguration';
 import DocumentViewer from './pages/DocumentViewer';
 import Documents from './pages/Documents';
+import ExternalSources from './pages/ExternalSources';
 import Features from './pages/Features';
 import Pipeline from './pages/Pipeline';
 import SystemDesign from './pages/SystemDesign';
 import Upload from './pages/Upload';
 import Vision from './pages/Vision';
-import ExternalSources from './pages/ExternalSources';
-import Analytics from './pages/Analytics';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Analytics": Analytics,
     "Architecture": Architecture,
     "BatchProcessing": BatchProcessing,
     "Compare": Compare,
@@ -72,13 +73,12 @@ export const PAGES = {
     "DocumentTypeConfiguration": DocumentTypeConfiguration,
     "DocumentViewer": DocumentViewer,
     "Documents": Documents,
+    "ExternalSources": ExternalSources,
     "Features": Features,
     "Pipeline": Pipeline,
     "SystemDesign": SystemDesign,
     "Upload": Upload,
     "Vision": Vision,
-    "ExternalSources": ExternalSources,
-    "Analytics": Analytics,
 }
 
 export const pagesConfig = {

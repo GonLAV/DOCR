@@ -20,6 +20,9 @@ import HandwritingOverlay from "@/components/viewer/HandwritingOverlay";
 import HandwritingPanel from "@/components/viewer/HandwritingPanel";
 import SummaryCard from "@/components/documents/SummaryCard";
 import TagManager from "@/components/tags/TagManager";
+import CommentThread from "@/components/collaboration/CommentThread";
+import AnnotationTool from "@/components/collaboration/AnnotationTool";
+import VersionHistory from "@/components/collaboration/VersionHistory";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -200,17 +203,16 @@ export default function DocumentViewer() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="w-full bg-slate-100 mb-4">
-                <TabsTrigger value="summary" className="flex-1 text-xs">Summary</TabsTrigger>
-                <TabsTrigger value="entities" className="flex-1 text-xs">Entities</TabsTrigger>
-                <TabsTrigger value="handwriting" className="flex-1 text-xs">Handwriting</TabsTrigger>
-                <TabsTrigger value="trust" className="flex-1 text-xs">Trust</TabsTrigger>
-                <TabsTrigger value="forensic" className="flex-1 text-xs">Forensic</TabsTrigger>
-                <TabsTrigger value="data" className="flex-1 text-xs">Data</TabsTrigger>
+              <TabsList className="w-full bg-slate-100 mb-4 grid grid-cols-4 h-auto">
+                <TabsTrigger value="entities" className="text-[10px]">Entities</TabsTrigger>
+                <TabsTrigger value="handwriting" className="text-[10px]">Handwriting</TabsTrigger>
+                <TabsTrigger value="trust" className="text-[10px]">Trust</TabsTrigger>
+                <TabsTrigger value="forensic" className="text-[10px]">Forensic</TabsTrigger>
+                <TabsTrigger value="data" className="text-[10px]">Data</TabsTrigger>
+                <TabsTrigger value="comments" className="text-[10px]">Comments</TabsTrigger>
+                <TabsTrigger value="annotations" className="text-[10px]">Annotate</TabsTrigger>
+                <TabsTrigger value="versions" className="text-[10px]">History</TabsTrigger>
               </TabsList>
-              <TabsContent value="summary">
-                <SummaryCard summary={document.ai_summary} />
-              </TabsContent>
               <TabsContent value="entities">
                 <EntityPanel entities={document.extracted_entities} anomalies={document.anomalies} />
               </TabsContent>
@@ -228,6 +230,18 @@ export default function DocumentViewer() {
               </TabsContent>
               <TabsContent value="data">
                 <StructuredDataPanel document={document} />
+              </TabsContent>
+              <TabsContent value="comments">
+                <CommentThread document={document} />
+              </TabsContent>
+              <TabsContent value="annotations">
+                <AnnotationTool 
+                  document={document} 
+                  imageUrl={document.original_file_url} 
+                />
+              </TabsContent>
+              <TabsContent value="versions">
+                <VersionHistory document={document} />
               </TabsContent>
             </Tabs>
           </div>

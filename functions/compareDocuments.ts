@@ -105,6 +105,55 @@ Analyze:
 
     result = { ...contentAnalysis };
 
+    // External Data Source Verification
+    const externalSources = await base44.asServiceRole.entities.ExternalDataSource.filter({ enabled: true });
+    
+    if (externalSources.length > 0) {
+      const externalVerifications = [];
+      
+      for (const source of externalSources) {
+        try {
+          // Query external source with document A data
+          const queryData = {};
+          if (source.field_mappings) {
+            for (const mapping of source.field_mappings) {
+              const entity = docA.extracted_entities?.find(e => e.field === mapping.document_field);
+              if (entity) {
+                queryData[mapping.document_field] = entity.value;
+              }
+            }
+          }
+
+          // Only query if we have the required data
+          if (Object.keys(queryData).length > 0) {
+            const externalResult = await base44.functions.invoke('queryExternalSource', {
+              source_id: source.id,
+              query_data: queryData
+            });
+
+            if (externalResult.data?.success) {
+              externalVerifications.push({
+                source_name: source.name,
+                verification_results: externalResult.data.verification_results,
+                response_time: externalResult.data.response_time,
+                verified_at: externalResult.data.timestamp
+              });
+            }
+          }
+        } catch (error) {
+          console.error(`External source ${source.name} verification failed:`, error);
+        }
+      }
+
+      if (externalVerifications.length > 0) {
+        result.external_verification = {
+          sources_checked: externalVerifications.length,
+          verifications: externalVerifications,
+          overall_match_rate: calculateOverallMatchRate(externalVerifications)
+        };
+      }
+    }
+
     // Forensic Comparison Mode
     if (comparison_mode === "forensic") {
       const forensicAnalysis = {
@@ -149,3 +198,22 @@ Analyze:
     }, { status: 500 });
   }
 });
+
+// Helper function to calculate overall match rate from external verifications
+function calculateOverallMatchRate(verifications) {
+  let totalChecks = 0;
+  let totalMatches = 0;
+
+  for (const verification of verifications) {
+    if (verification.verification_results) {
+      for (const result of verification.verification_results) {
+        totalChecks++;
+        if (result.match) {
+          totalMatches++;
+        }
+      }
+    }
+  }
+
+  return totalChecks > 0 ? Math.round((totalMatches / totalChecks) * 100) : 0;
+}

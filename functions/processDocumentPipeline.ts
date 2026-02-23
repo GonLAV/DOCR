@@ -37,37 +37,44 @@ Deno.serve(async (req) => {
             original_url: document.original_file_url
         });
 
-        if (forensicResult.data?.fingerprint) {
-            await base44.entities.Document.update(document_id, {
-                fingerprint: forensicResult.data.fingerprint,
-                scan_metadata: forensicResult.data.metadata
-            });
-        }
+        // STAGE 2: Damage Assessment
+        await updateStage(base44, document_id, 'damage');
+        stages.push({ stage: 'damage', status: 'completed' });
 
-        // STAGE 2: Multi-Model OCR Consensus
+        await base44.functions.invoke('damageAnalyzer', {
+            document_id: document_id
+        });
+
+        // STAGE 3: AI Enhancement
         await updateStage(base44, document_id, 'enhancement');
         stages.push({ stage: 'enhancement', status: 'completed' });
 
-        const ocrResult = await base44.functions.invoke('multiModelConsensus', {
-            document_id: document.id,
-            image_url: document.original_file_url
+        await base44.functions.invoke('enhanceDocument', {
+            document_id: document_id
         });
 
-        if (ocrResult.data) {
-            await base44.entities.Document.update(document_id, {
-                extracted_text: ocrResult.data.consensus_text,
-                extracted_entities: ocrResult.data.entities || [],
-                confidence_score: ocrResult.data.overall_confidence
-            });
-        }
-
-        // STAGE 3: Layout Analysis
+        // STAGE 4: Layout Analysis
         await updateStage(base44, document_id, 'layout');
         stages.push({ stage: 'layout', status: 'completed' });
 
-        // STAGE 4: Semantic Analysis & Entity Extraction (Enhanced)
+        await base44.functions.invoke('layoutAnalysis', {
+            document_id: document_id
+        });
+
+        // STAGE 5: Multi-Model OCR Consensus
+        const updatedDocAfterLayout = (await base44.entities.Document.filter({ id: document_id }))[0];
+        
+        await base44.functions.invoke('multiModelConsensus', {
+            document_id: document_id
+        });
+
+        // STAGE 6: Semantic Analysis & Entity Extraction
         await updateStage(base44, document_id, 'semantic');
         stages.push({ stage: 'semantic', status: 'completed' });
+
+        await base44.functions.invoke('semanticExtraction', {
+            document_id: document_id
+        });
 
         const updatedDoc = (await base44.entities.Document.filter({ id: document_id }))[0];
 
@@ -82,45 +89,43 @@ Deno.serve(async (req) => {
             });
         }
 
-        // STAGE 5: Validation & Anomaly Detection
+        // STAGE 7: Validation & Anomaly Detection
         await updateStage(base44, document_id, 'confidence');
-        stages.push({ stage: 'confidence', status: 'completed' });
+        stages.push({ stage: 'validation', status: 'completed' });
 
         const validationResult = await base44.functions.invoke('applyValidationRules', {
             document_id: document_id
         });
 
-        if (validationResult.data?.anomalies) {
-            await base44.entities.Document.update(document_id, {
-                anomalies: validationResult.data.anomalies
-            });
-        }
-
-        // STAGE 6: Trust Score Calculation
-        await updateStage(base44, document_id, 'confidence');
+        // STAGE 8: Trust Score Calculation
         stages.push({ stage: 'trust_score', status: 'completed' });
 
-        const trustResult = await base44.functions.invoke('calculateTrustScore', {
+        await base44.functions.invoke('calculateTrustScore', {
             document_id: document_id
         });
 
-        // STAGE 7: Cross-Document Verification (if related docs exist)
+        // STAGE 9: Handwriting Recognition (if handwriting detected)
+        if (updatedDoc.layout_analysis?.handwriting_regions?.length > 0) {
+            stages.push({ stage: 'handwriting_recognition', status: 'completed' });
+            await base44.functions.invoke('recognizeHandwriting', {
+                document_id: document_id
+            });
+        }
+
+        // Cross-Document Verification and External Sources are available on-demand
         const relatedDocs = await base44.entities.Document.filter({
             document_class: updatedDoc.document_class,
             status: 'completed'
         });
 
         if (relatedDocs.length > 1) {
-            stages.push({ stage: 'cross_verification', status: 'in_progress' });
-            // Cross-verification happens on demand, not automatically
+            stages.push({ stage: 'cross_verification', status: 'available' });
         }
 
-        // STAGE 8: External Data Verification (if sources configured)
         const externalSources = await base44.asServiceRole.entities.ExternalDataSource.filter({ enabled: true });
         
         if (externalSources.length > 0) {
             stages.push({ stage: 'external_verification', status: 'available' });
-            // External verification happens on demand
         }
 
         // Final update

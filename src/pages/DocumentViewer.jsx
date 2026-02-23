@@ -29,6 +29,8 @@ import VersionHistory from "@/components/collaboration/VersionHistory";
 import ActiveUsers from "@/components/collaboration/ActiveUsers";
 import AccessControlPanel from "@/components/access/AccessControlPanel";
 import AuditTrailViewer from "@/components/audit/AuditTrailViewer";
+import DocumentClassificationCard from "@/components/ai/DocumentClassificationCard";
+import AnomalyDetectionPanel from "@/components/ai/AnomalyDetectionPanel";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -262,9 +264,11 @@ export default function DocumentViewer() {
                 </div>
               </div>
             )}
-            {/* AI Summary */}
+            {/* AI Features */}
             {document.status === "completed" && (
-              <div className="mb-4">
+              <div className="mb-4 space-y-4">
+                <DocumentClassificationCard document={document} />
+                <AnomalyDetectionPanel document={document} />
                 <SummaryCard summary={document.ai_summary} documentId={document.id} />
               </div>
             )}

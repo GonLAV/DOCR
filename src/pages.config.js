@@ -62,6 +62,7 @@ import SystemDesign from './pages/SystemDesign';
 import Upload from './pages/Upload';
 import Vision from './pages/Vision';
 import ProcessingWorkflow from './pages/ProcessingWorkflow';
+import Workflows from './pages/Workflows';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "Upload": Upload,
     "Vision": Vision,
     "ProcessingWorkflow": ProcessingWorkflow,
+    "Workflows": Workflows,
 }
 
 export const pagesConfig = {

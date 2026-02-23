@@ -14,6 +14,7 @@ import {
   Eye,
   EyeOff
 } from "lucide-react";
+import AISummaryLayer from "./AISummaryLayer";
 
 export default function LayeredOutputViewer({ document }) {
   const [activeLayer, setActiveLayer] = useState("original");
@@ -65,7 +66,8 @@ export default function LayeredOutputViewer({ document }) {
         entities: document.extracted_entities || [],
         layout: document.layout_analysis || {},
         metadata: document.scan_metadata || {},
-        structured_data: document.structured_data || {}
+        structured_data: document.structured_data || {},
+        ai_summary: document.ai_summary
       }
     },
     {
@@ -79,7 +81,8 @@ export default function LayeredOutputViewer({ document }) {
         confidence_score: document.confidence_score,
         anomalies: document.anomalies || [],
         consensus_data: document.structured_data?.ocr_consensus || {},
-        damage_assessment: document.damage_assessment
+        damage_assessment: document.damage_assessment,
+        ai_summary: document.ai_summary
       }
     },
     {
@@ -93,7 +96,8 @@ export default function LayeredOutputViewer({ document }) {
         confidence: document.confidence_score,
         tampering_risk: document.tampering_risk,
         court_ready: document.confidence_score >= 95,
-        bank_ready: document.confidence_score >= 98
+        bank_ready: document.confidence_score >= 98,
+        ai_summary: document.ai_summary
       }
     }
   ];
@@ -227,42 +231,63 @@ export default function LayeredOutputViewer({ document }) {
                     </div>
                   )}
 
-                  {/* Layer 4: JSON */}
+                  {/* Layer 4: JSON + Summary */}
                   {layer.id === 'layer4' && (
-                    <div className="p-4 max-h-96 overflow-y-auto bg-slate-900">
-                      <pre className="text-xs text-slate-100 font-mono">
-                        {JSON.stringify(layer.content, null, 2)}
-                      </pre>
+                    <div className="space-y-4 p-4">
+                      {layer.content.ai_summary && (
+                        <div className="mb-4">
+                          <h5 className="text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                            <Sparkles className="w-3 h-3" />
+                            AI Summary (Included in Export)
+                          </h5>
+                          <div className="glass rounded-lg p-3 text-xs text-slate-700">
+                            {layer.content.ai_summary.overview}
+                          </div>
+                        </div>
+                      )}
+                      <div className="max-h-96 overflow-y-auto bg-slate-900 rounded-lg">
+                        <pre className="text-xs text-slate-100 font-mono p-4">
+                          {JSON.stringify(layer.content, null, 2)}
+                        </pre>
+                      </div>
                     </div>
                   )}
 
-                  {/* Layer 5: Annotations */}
+                  {/* Layer 5: Annotations + Summary */}
                   {layer.id === 'layer5' && (
-                    <div className="p-4 space-y-3">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-blue-50 rounded-lg">
-                          <p className="text-xs text-slate-600 mb-1">Confidence</p>
-                          <p className="text-xl font-bold text-blue-700">
-                            {layer.content.confidence_score || 0}%
-                          </p>
+                    <div className="p-4 space-y-4">
+                      {layer.content.ai_summary ? (
+                        <div className="mb-4">
+                          <AISummaryLayer document={document} />
                         </div>
-                        <div className="p-3 bg-red-50 rounded-lg">
-                          <p className="text-xs text-slate-600 mb-1">Anomalies</p>
-                          <p className="text-xl font-bold text-red-700">
-                            {layer.content.anomalies?.length || 0}
-                          </p>
-                        </div>
-                      </div>
-                      {layer.content.anomalies?.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-xs font-semibold text-slate-900">Detected Issues:</p>
-                          {layer.content.anomalies.map((anomaly, idx) => (
-                            <div key={idx} className="p-2 bg-amber-50 rounded border border-amber-200">
-                              <p className="text-xs font-medium text-slate-900">{anomaly.type}</p>
-                              <p className="text-xs text-slate-600">{anomaly.description}</p>
+                      ) : (
+                        <>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="p-3 bg-blue-50 rounded-lg">
+                              <p className="text-xs text-slate-600 mb-1">Confidence</p>
+                              <p className="text-xl font-bold text-blue-700">
+                                {layer.content.confidence_score || 0}%
+                              </p>
                             </div>
-                          ))}
-                        </div>
+                            <div className="p-3 bg-red-50 rounded-lg">
+                              <p className="text-xs text-slate-600 mb-1">Anomalies</p>
+                              <p className="text-xl font-bold text-red-700">
+                                {layer.content.anomalies?.length || 0}
+                              </p>
+                            </div>
+                          </div>
+                          {layer.content.anomalies?.length > 0 && (
+                            <div className="space-y-2">
+                              <p className="text-xs font-semibold text-slate-900">Detected Issues:</p>
+                              {layer.content.anomalies.map((anomaly, idx) => (
+                                <div key={idx} className="p-2 bg-amber-50 rounded border border-amber-200">
+                                  <p className="text-xs font-medium text-slate-900">{anomaly.type}</p>
+                                  <p className="text-xs text-slate-600">{anomaly.description}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   )}

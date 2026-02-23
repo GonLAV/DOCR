@@ -5,7 +5,12 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GitCompare, CheckCircle2, AlertTriangle, Loader2, ArrowRight } from "lucide-react";
+import { GitCompare, CheckCircle2, AlertTriangle, Loader2, ArrowRight, Shield } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import VisualComparisonPanel from "@/components/compare/VisualComparisonPanel";
+import TextDiffPanel from "@/components/compare/TextDiffPanel";
+import SemanticDiffPanel from "@/components/compare/SemanticDiffPanel";
+import ForensicPanel from "@/components/compare/ForensicPanel";
 
 export default function Compare() {
   const queryClient = useQueryClient();
@@ -13,6 +18,8 @@ export default function Compare() {
   const [docB, setDocB] = useState("");
   const [isComparing, setIsComparing] = useState(false);
   const [result, setResult] = useState(null);
+  const [comparisonMode, setComparisonMode] = useState("standard"); // "standard" or "forensic"
+  const [activeTab, setActiveTab] = useState("visual");
 
   const { data: documents = [] } = useQuery({
     queryKey: ["documents"],
@@ -28,76 +35,42 @@ export default function Compare() {
     const a = documents.find(d => d.id === docA);
     const b = documents.find(d => d.id === docB);
 
-    const analysis = await base44.integrations.Core.InvokeLLM({
-      prompt: `Compare these two documents and find:
-1. Matching fields and values
-2. Discrepancies and contradictions
-3. Missing information in either document
-4. Overall verification score
-
-Document A: "${a.title}"
-Extracted data: ${JSON.stringify(a.structured_data)}
-
-Document B: "${b.title}"
-Extracted data: ${JSON.stringify(b.structured_data)}
-
-Provide a detailed cross-document analysis.`,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          matches: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                field: { type: "string" },
-                value_a: { type: "string" },
-                value_b: { type: "string" },
-                match_type: { type: "string" },
-                confidence: { type: "number" }
-              }
-            }
-          },
-          discrepancies: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                field: { type: "string" },
-                value_a: { type: "string" },
-                value_b: { type: "string" },
-                severity: { type: "string" },
-                explanation: { type: "string" }
-              }
-            }
-          },
-          summary: { type: "string" },
-          verification_score: { type: "number" }
-        }
-      }
+    // Call enhanced comparison function
+    const response = await base44.functions.invoke('compareDocuments', {
+      document_a_id: docA,
+      document_b_id: docB,
+      comparison_mode: comparisonMode
     });
 
+    const comparisonData = response.data.comparison;
+
+    // Create comparison record
     const comparison = await base44.entities.DocumentComparison.create({
       title: `${a.title} vs ${b.title}`,
       document_ids: [docA, docB],
       status: "completed",
-      matches: analysis.matches?.map(m => ({
-        field: m.field,
-        values: [m.value_a, m.value_b],
-        match_type: m.match_type,
-        confidence: m.confidence
-      })),
-      discrepancies: analysis.discrepancies?.map(d => ({
-        field: d.field,
-        values: [d.value_a, d.value_b],
-        severity: d.severity,
-        explanation: d.explanation
-      })),
-      summary: analysis.summary,
-      verification_score: analysis.verification_score,
+      matches: comparisonData.entity_comparison?.filter(e => e.match).map(e => ({
+        field: e.field,
+        values: [e.value_a, e.value_b],
+        match_type: "exact",
+        confidence: e.confidence
+      })) || [],
+      discrepancies: comparisonData.entity_comparison?.filter(e => !e.match).map(e => ({
+        field: e.field,
+        values: [e.value_a, e.value_b],
+        severity: "medium",
+        explanation: "Value mismatch detected"
+      })) || [],
+      summary: comparisonData.summary,
+      verification_score: comparisonData.verification_score,
     });
 
-    setResult({ ...comparison, ...analysis });
+    setResult({ 
+      ...comparison, 
+      ...comparisonData,
+      docA: a,
+      docB: b
+    });
     setIsComparing(false);
   };
 
@@ -109,11 +82,37 @@ Provide a detailed cross-document analysis.`,
       </div>
 
       {/* Selection */}
-      <Card className="border-slate-200/60">
-        <CardContent className="p-6">
+      <Card className="glass-strong border border-white/20">
+        <CardContent className="p-6 space-y-4">
+          {/* Comparison Mode Toggle */}
+          <div>
+            <label className="text-xs font-medium text-gray-400 mb-2 block">Comparison Mode</label>
+            <div className="flex gap-2">
+              <Button
+                variant={comparisonMode === "standard" ? "default" : "outline"}
+                onClick={() => setComparisonMode("standard")}
+                className={comparisonMode === "standard" 
+                  ? "bg-blue-500 hover:bg-blue-600 text-white" 
+                  : "glass text-gray-300 hover:glass-strong"}
+              >
+                Standard Comparison
+              </Button>
+              <Button
+                variant={comparisonMode === "forensic" ? "default" : "outline"}
+                onClick={() => setComparisonMode("forensic")}
+                className={comparisonMode === "forensic" 
+                  ? "bg-cyan-500 hover:bg-cyan-600 text-white" 
+                  : "glass text-gray-300 hover:glass-strong"}
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Forensic Mode
+              </Button>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="flex-1 w-full">
-              <label className="text-xs font-medium text-slate-500 mb-1.5 block">Document A</label>
+              <label className="text-xs font-medium text-gray-400 mb-1.5 block">Document A</label>
               <Select value={docA} onValueChange={setDocA}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select document..." />
@@ -127,7 +126,7 @@ Provide a detailed cross-document analysis.`,
             </div>
             <GitCompare className="w-5 h-5 text-slate-300 mt-5 shrink-0" />
             <div className="flex-1 w-full">
-              <label className="text-xs font-medium text-slate-500 mb-1.5 block">Document B</label>
+              <label className="text-xs font-medium text-gray-400 mb-1.5 block">Document B</label>
               <Select value={docB} onValueChange={setDocB}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select document..." />
@@ -157,7 +156,7 @@ Provide a detailed cross-document analysis.`,
       {result && (
         <div className="space-y-6">
           {/* Score */}
-          <Card className="border-slate-200/60">
+          <Card className="glass-strong border border-white/20">
             <CardContent className="p-6">
               <div className="flex items-center gap-6">
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
@@ -172,16 +171,84 @@ Provide a detailed cross-document analysis.`,
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">Verification Score</p>
-                  <p className="text-xs text-slate-500 mt-1 max-w-md">{result.summary}</p>
+                  <p className="text-sm font-semibold text-white">Verification Score</p>
+                  <p className="text-xs text-gray-300 mt-1 max-w-md">{result.summary}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Matches */}
-          {result.matches && result.matches.length > 0 && (
-            <Card className="border-slate-200/60">
+          {/* Tabbed Comparison Views */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="w-full bg-white/10 mb-4">
+              <TabsTrigger value="visual" className="flex-1 text-xs">Visual</TabsTrigger>
+              <TabsTrigger value="text" className="flex-1 text-xs">Text</TabsTrigger>
+              <TabsTrigger value="entities" className="flex-1 text-xs">Entities</TabsTrigger>
+              <TabsTrigger value="semantic" className="flex-1 text-xs">Semantic</TabsTrigger>
+              {comparisonMode === "forensic" && (
+                <TabsTrigger value="forensic" className="flex-1 text-xs">Forensic</TabsTrigger>
+              )}
+            </TabsList>
+
+            <TabsContent value="visual">
+              <VisualComparisonPanel docA={result.docA} docB={result.docB} />
+            </TabsContent>
+
+            <TabsContent value="text">
+              <TextDiffPanel textDiff={result.text_diff} />
+            </TabsContent>
+
+            <TabsContent value="entities" className="space-y-4">
+              {/* Entity Comparison */}
+              {result.entity_comparison && result.entity_comparison.length > 0 && (
+                <Card className="glass-strong border border-white/20">
+                  <CardHeader>
+                    <CardTitle className="text-white">Entity Comparison</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {result.entity_comparison.map((entity, i) => (
+                      <div key={i} className={`p-3 rounded-xl ${
+                        entity.match ? 'glass border border-emerald-500/20' : 'glass border border-amber-500/20'
+                      }`}>
+                        <div className="flex items-start justify-between mb-2">
+                          <span className="text-sm font-bold text-white">{entity.field}</span>
+                          <Badge className={`text-[10px] ${
+                            entity.match ? 'bg-emerald-500' : 'bg-amber-500'
+                          } text-white`}>
+                            {entity.match ? 'Match' : 'Different'} ({entity.confidence}%)
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="text-xs">
+                            <div className="text-gray-400 mb-1">Doc A</div>
+                            <div className="text-white">{entity.value_a}</div>
+                          </div>
+                          <div className="text-xs">
+                            <div className="text-gray-400 mb-1">Doc B</div>
+                            <div className="text-white">{entity.value_b}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            <TabsContent value="semantic">
+              <SemanticDiffPanel semanticDifferences={result.semantic_differences} />
+            </TabsContent>
+
+            {comparisonMode === "forensic" && (
+              <TabsContent value="forensic">
+                <ForensicPanel forensicAnalysis={result.forensic_analysis} />
+              </TabsContent>
+            )}
+          </Tabs>
+
+          {/* Legacy Matches (Hidden by default, kept for compatibility) */}
+          {false && result.matches && result.matches.length > 0 && (
+            <Card className="glass-strong border border-white/20">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-semibold text-emerald-800 flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
@@ -204,9 +271,9 @@ Provide a detailed cross-document analysis.`,
             </Card>
           )}
 
-          {/* Discrepancies */}
-          {result.discrepancies && result.discrepancies.length > 0 && (
-            <Card className="border-rose-200/60">
+          {/* Legacy Discrepancies (Hidden by default, kept for compatibility) */}
+          {false && result.discrepancies && result.discrepancies.length > 0 && (
+            <Card className="glass-strong border border-rose-500/20">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-semibold text-rose-800 flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />

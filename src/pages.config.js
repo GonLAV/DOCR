@@ -47,32 +47,32 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Dashboard from './pages/Dashboard';
-import Upload from './pages/Upload';
-import Documents from './pages/Documents';
-import DocumentViewer from './pages/DocumentViewer';
-import Compare from './pages/Compare';
 import Architecture from './pages/Architecture';
-import Pipeline from './pages/Pipeline';
-import Features from './pages/Features';
-import SystemDesign from './pages/SystemDesign';
-import Vision from './pages/Vision';
 import BatchProcessing from './pages/BatchProcessing';
+import Compare from './pages/Compare';
+import Dashboard from './pages/Dashboard';
+import DocumentViewer from './pages/DocumentViewer';
+import Documents from './pages/Documents';
+import Features from './pages/Features';
+import Pipeline from './pages/Pipeline';
+import SystemDesign from './pages/SystemDesign';
+import Upload from './pages/Upload';
+import Vision from './pages/Vision';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
-    "Upload": Upload,
-    "Documents": Documents,
-    "DocumentViewer": DocumentViewer,
-    "Compare": Compare,
     "Architecture": Architecture,
-    "Pipeline": Pipeline,
-    "Features": Features,
-    "SystemDesign": SystemDesign,
-    "Vision": Vision,
     "BatchProcessing": BatchProcessing,
+    "Compare": Compare,
+    "Dashboard": Dashboard,
+    "DocumentViewer": DocumentViewer,
+    "Documents": Documents,
+    "Features": Features,
+    "Pipeline": Pipeline,
+    "SystemDesign": SystemDesign,
+    "Upload": Upload,
+    "Vision": Vision,
 }
 
 export const pagesConfig = {

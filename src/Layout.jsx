@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
 import {
   FileSearch,
   LayoutDashboard,
@@ -24,10 +25,16 @@ const navItems = [
   { name: "Documents", icon: FileSearch, page: "Documents", gradient: "from-violet-500 to-purple-500" },
   { name: "Batch Processing", icon: Settings, page: "BatchProcessing", gradient: "from-fuchsia-500 to-purple-500" },
   { name: "Compare", icon: GitCompare, page: "Compare", gradient: "from-cyan-500 to-blue-500" },
+  { name: "Config", icon: Settings, page: "DocumentTypeConfiguration", gradient: "from-slate-500 to-gray-500", adminOnly: true },
 ];
 
 export default function Layout({ children, currentPageName }) {
   const [collapsed, setCollapsed] = React.useState(false);
+  const [user, setUser] = React.useState(null);
+
+  React.useEffect(() => {
+    base44.auth.me().then(u => setUser(u)).catch(() => {});
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -64,9 +71,12 @@ export default function Layout({ children, currentPageName }) {
 
         {/* Navigation */}
         <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-          {navItems.map((item, index) => {
-            const isActive = currentPageName === item.page;
-            return (
+            {navItems.map((item, index) => {
+              // Hide admin-only items for non-admin users
+              if (item.adminOnly && user?.role !== 'admin') return null;
+
+              const isActive = currentPageName === item.page;
+              return (
               <motion.div
                 key={item.page}
                 initial={{ opacity: 0, x: -20 }}

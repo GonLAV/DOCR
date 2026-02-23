@@ -58,6 +58,13 @@ export default function DocumentCard({ document }) {
               )}
             </div>
 
+            {/* AI Summary Preview */}
+            {document.ai_summary && (
+              <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                {document.ai_summary.overview}
+              </p>
+            )}
+
             <div className="flex items-center gap-3">
               {document.confidence_score != null && (
                 <div className="flex items-center gap-1.5">

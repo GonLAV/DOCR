@@ -18,6 +18,7 @@ import CorrectionWorkflow from "@/components/correction/CorrectionWorkflow";
 import ConfidenceHeatmap from "@/components/trust/ConfidenceHeatmap";
 import HandwritingOverlay from "@/components/viewer/HandwritingOverlay";
 import HandwritingPanel from "@/components/viewer/HandwritingPanel";
+import SummaryCard from "@/components/documents/SummaryCard";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -168,6 +169,13 @@ export default function DocumentViewer() {
         {/* Side Panel */}
         <div className="w-[380px] border-l border-slate-200 bg-white overflow-y-auto">
           <div className="p-4">
+            {/* AI Summary */}
+            {document.status === "completed" && (
+              <div className="mb-4">
+                <SummaryCard summary={document.ai_summary} />
+              </div>
+            )}
+
             {document.confidence_score != null && (
               <div className="mb-4">
                 <ConfidenceOverview document={document} />
@@ -187,12 +195,16 @@ export default function DocumentViewer() {
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full bg-slate-100 mb-4">
+                <TabsTrigger value="summary" className="flex-1 text-xs">Summary</TabsTrigger>
                 <TabsTrigger value="entities" className="flex-1 text-xs">Entities</TabsTrigger>
                 <TabsTrigger value="handwriting" className="flex-1 text-xs">Handwriting</TabsTrigger>
                 <TabsTrigger value="trust" className="flex-1 text-xs">Trust</TabsTrigger>
                 <TabsTrigger value="forensic" className="flex-1 text-xs">Forensic</TabsTrigger>
                 <TabsTrigger value="data" className="flex-1 text-xs">Data</TabsTrigger>
               </TabsList>
+              <TabsContent value="summary">
+                <SummaryCard summary={document.ai_summary} />
+              </TabsContent>
               <TabsContent value="entities">
                 <EntityPanel entities={document.extracted_entities} anomalies={document.anomalies} />
               </TabsContent>

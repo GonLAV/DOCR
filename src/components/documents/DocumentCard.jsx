@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Shield, AlertTriangle, Clock, CheckCircle2 } from "lucide-react";
+import { FileText, Shield, AlertTriangle, Clock, CheckCircle2, Tag } from "lucide-react";
 import { format } from "date-fns";
 
 const statusConfig = {
@@ -65,7 +65,7 @@ export default function DocumentCard({ document }) {
               </p>
             )}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {document.confidence_score != null && (
                 <div className="flex items-center gap-1.5">
                   <div className={`w-1.5 h-1.5 rounded-full ${
@@ -85,6 +85,12 @@ export default function DocumentCard({ document }) {
                 <div className="flex items-center gap-1">
                   <AlertTriangle className="w-3 h-3 text-rose-500" />
                   <span className="text-[11px] font-medium text-rose-600">{document.anomalies.length} anomalies</span>
+                </div>
+              )}
+              {document.tags && document.tags.length > 0 && (
+                <div className="flex items-center gap-1">
+                  <Tag className="w-3 h-3 text-purple-500" />
+                  <span className="text-[11px] font-medium text-purple-600">{document.tags.length} tags</span>
                 </div>
               )}
             </div>

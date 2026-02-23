@@ -19,6 +19,7 @@ import ConfidenceHeatmap from "@/components/trust/ConfidenceHeatmap";
 import HandwritingOverlay from "@/components/viewer/HandwritingOverlay";
 import HandwritingPanel from "@/components/viewer/HandwritingPanel";
 import SummaryCard from "@/components/documents/SummaryCard";
+import TagManager from "@/components/tags/TagManager";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -192,6 +193,11 @@ export default function DocumentViewer() {
                 <CorrectionWorkflow document={document} trustScore={trustScore} />
               </div>
             )}
+
+            {/* Tag Manager */}
+            <div className="mb-4">
+              <TagManager document={document} />
+            </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full bg-slate-100 mb-4">

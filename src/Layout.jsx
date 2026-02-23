@@ -9,12 +9,14 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Layers
+  Layers,
+  Workflow
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
+  { name: "Pipeline", icon: Workflow, page: "Pipeline" },
   { name: "Upload", icon: Upload, page: "Upload" },
   { name: "Documents", icon: FileSearch, page: "Documents" },
   { name: "Compare", icon: GitCompare, page: "Compare" },

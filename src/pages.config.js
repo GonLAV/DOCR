@@ -53,6 +53,7 @@ import Documents from './pages/Documents';
 import DocumentViewer from './pages/DocumentViewer';
 import Compare from './pages/Compare';
 import Architecture from './pages/Architecture';
+import Pipeline from './pages/Pipeline';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +64,7 @@ export const PAGES = {
     "DocumentViewer": DocumentViewer,
     "Compare": Compare,
     "Architecture": Architecture,
+    "Pipeline": Pipeline,
 }
 
 export const pagesConfig = {

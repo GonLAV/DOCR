@@ -19,6 +19,7 @@ import ParticleBackground from "@/components/effects/ParticleBackground";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard", gradient: "from-blue-500 to-cyan-500" },
+  { name: "Processing Workflow", icon: Workflow, page: "ProcessingWorkflow", gradient: "from-indigo-500 to-purple-500" },
   { name: "Vision", icon: Sparkles, page: "Vision", gradient: "from-purple-500 to-pink-500" },
   { name: "System Design", icon: Layers, page: "SystemDesign", gradient: "from-indigo-500 to-purple-500" },
   { name: "Features", icon: Zap, page: "Features", gradient: "from-emerald-500 to-teal-500" },

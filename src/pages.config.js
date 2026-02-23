@@ -61,6 +61,7 @@ import Pipeline from './pages/Pipeline';
 import SystemDesign from './pages/SystemDesign';
 import Upload from './pages/Upload';
 import Vision from './pages/Vision';
+import ProcessingWorkflow from './pages/ProcessingWorkflow';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "SystemDesign": SystemDesign,
     "Upload": Upload,
     "Vision": Vision,
+    "ProcessingWorkflow": ProcessingWorkflow,
 }
 
 export const pagesConfig = {

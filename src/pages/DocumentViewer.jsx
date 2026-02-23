@@ -27,6 +27,8 @@ import CommentThread from "@/components/collaboration/CommentThread";
 import AnnotationTool from "@/components/collaboration/AnnotationTool";
 import VersionHistory from "@/components/collaboration/VersionHistory";
 import ActiveUsers from "@/components/collaboration/ActiveUsers";
+import AccessControlPanel from "@/components/access/AccessControlPanel";
+import AuditTrailViewer from "@/components/audit/AuditTrailViewer";
 
 export default function DocumentViewer() {
   const params = new URLSearchParams(window.location.search);
@@ -306,6 +308,8 @@ export default function DocumentViewer() {
                 <TabsTrigger value="comments" className="text-[10px]">Comments</TabsTrigger>
                 <TabsTrigger value="annotations" className="text-[10px]">Annotate</TabsTrigger>
                 <TabsTrigger value="versions" className="text-[10px]">History</TabsTrigger>
+                <TabsTrigger value="access" className="text-[10px]">Access</TabsTrigger>
+                <TabsTrigger value="audit" className="text-[10px]">Audit</TabsTrigger>
               </TabsList>
               <TabsContent value="entities">
                 <EntityPanel entities={document.extracted_entities} anomalies={document.anomalies} />
@@ -339,6 +343,12 @@ export default function DocumentViewer() {
               </TabsContent>
               <TabsContent value="versions">
                 <VersionHistory document={document} />
+              </TabsContent>
+              <TabsContent value="access">
+                <AccessControlPanel entityId={document.id} entityType="document" />
+              </TabsContent>
+              <TabsContent value="audit">
+                <AuditTrailViewer entityId={document.id} entityType="document" />
               </TabsContent>
             </Tabs>
           </div>

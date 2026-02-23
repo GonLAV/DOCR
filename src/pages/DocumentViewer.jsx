@@ -15,6 +15,9 @@ import StructuredDataPanel from "@/components/viewer/StructuredDataPanel";
 import ConfidenceOverview from "@/components/viewer/ConfidenceOverview";
 import TrustMeter from "@/components/trust/TrustMeter";
 import CorrectionWorkflow from "@/components/correction/CorrectionWorkflow";
+import InteractiveCorrectionPanel from "@/components/correction/InteractiveCorrectionPanel";
+import CrossDocumentVerification from "@/components/verification/CrossDocumentVerification";
+import LayeredOutputViewer from "@/components/viewer/LayeredOutputViewer";
 import ConfidenceHeatmap from "@/components/trust/ConfidenceHeatmap";
 import HandwritingOverlay from "@/components/viewer/HandwritingOverlay";
 import HandwritingPanel from "@/components/viewer/HandwritingPanel";
@@ -273,9 +276,15 @@ export default function DocumentViewer() {
               </div>
             )}
             
-            {document.status === "completed" && trustScore && (
+            {document.status === "completed" && (
               <div className="mb-4">
-                <CorrectionWorkflow document={document} trustScore={trustScore} />
+                <InteractiveCorrectionPanel document={document} />
+              </div>
+            )}
+
+            {document.status === "completed" && (
+              <div className="mb-4">
+                <CrossDocumentVerification document={document} />
               </div>
             )}
 
@@ -285,8 +294,9 @@ export default function DocumentViewer() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="w-full bg-slate-100 mb-4 grid grid-cols-4 h-auto">
+              <TabsList className="w-full bg-slate-100 mb-4 grid grid-cols-5 h-auto">
                 <TabsTrigger value="entities" className="text-[10px]">Entities</TabsTrigger>
+                <TabsTrigger value="layers" className="text-[10px]">6 Layers</TabsTrigger>
                 <TabsTrigger value="handwriting" className="text-[10px]">Handwriting</TabsTrigger>
                 <TabsTrigger value="trust" className="text-[10px]">Trust</TabsTrigger>
                 <TabsTrigger value="forensic" className="text-[10px]">Forensic</TabsTrigger>
@@ -297,6 +307,9 @@ export default function DocumentViewer() {
               </TabsList>
               <TabsContent value="entities">
                 <EntityPanel entities={document.extracted_entities} anomalies={document.anomalies} />
+              </TabsContent>
+              <TabsContent value="layers">
+                <LayeredOutputViewer document={document} />
               </TabsContent>
               <TabsContent value="handwriting">
                 <HandwritingPanel regions={document.handwriting_regions} />

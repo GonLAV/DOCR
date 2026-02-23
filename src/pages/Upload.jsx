@@ -38,6 +38,21 @@ export default function Upload() {
         };
       }
 
+      if (stage === "confidence") {
+        // Multi-model consensus for court-grade accuracy
+        const consensusResult = await base44.functions.invoke("multiModelConsensus", {
+          document_id: doc.id,
+          file_url: doc.original_file_url
+        });
+        
+        stageResult = {
+          structured_data: {
+            ...doc.structured_data,
+            consensus: consensusResult.data?.consensus
+          }
+        };
+      }
+
       if (stage === "semantic") {
         const analysis = await base44.integrations.Core.InvokeLLM({
           prompt: `Analyze this scanned document image. Provide:
@@ -113,6 +128,11 @@ Be thorough and detailed. Return structured data.`,
           degradation_estimate: analysis.degradation,
           structured_data: analysis,
         };
+        
+        // Apply validation rules
+        await base44.functions.invoke("applyValidationRules", {
+          document_id: doc.id
+        });
       }
 
       await base44.entities.Document.update(doc.id, stageResult);

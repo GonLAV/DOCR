@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 import WorkflowBuilder from "@/components/workflow/WorkflowBuilder";
 import WorkflowVersionManager from "@/components/workflow/WorkflowVersionManager";
 import WorkflowOptimizationPanel from "@/components/workflow/WorkflowOptimizationPanel";
+import AILearningPanel from "@/components/workflow/AILearningPanel";
 
 export default function Workflows() {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -77,6 +78,7 @@ export default function Workflows() {
                 currentWorkflow={selectedWorkflow}
               />
               <WorkflowOptimizationPanel workflowId={selectedWorkflow.id} />
+              <AILearningPanel workflowId={selectedWorkflow.id} />
             </>
           )}
         </div>

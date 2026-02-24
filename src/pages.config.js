@@ -62,8 +62,9 @@ import ProcessingWorkflow from './pages/ProcessingWorkflow';
 import SystemDesign from './pages/SystemDesign';
 import Upload from './pages/Upload';
 import Vision from './pages/Vision';
-import Workflows from './pages/Workflows';
 import WorkflowMonitoring from './pages/WorkflowMonitoring';
+import Workflows from './pages/Workflows';
+import ReportGeneration from './pages/ReportGeneration';
 import __Layout from './Layout.jsx';
 
 
@@ -83,8 +84,9 @@ export const PAGES = {
     "SystemDesign": SystemDesign,
     "Upload": Upload,
     "Vision": Vision,
-    "Workflows": Workflows,
     "WorkflowMonitoring": WorkflowMonitoring,
+    "Workflows": Workflows,
+    "ReportGeneration": ReportGeneration,
 }
 
 export const pagesConfig = {

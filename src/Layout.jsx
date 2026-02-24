@@ -32,6 +32,7 @@ const navItems = [
   { name: "Upload", icon: Upload, page: "Upload", gradient: "from-pink-500 to-rose-500" },
   { name: "Documents", icon: FileSearch, page: "Documents", gradient: "from-violet-500 to-purple-500" },
   { name: "Analytics", icon: BarChart3, page: "Analytics", gradient: "from-amber-500 to-orange-500" },
+  { name: "Reports", icon: FileText, page: "ReportGeneration", gradient: "from-rose-500 to-pink-500" },
   { name: "Batch Processing", icon: Settings, page: "BatchProcessing", gradient: "from-fuchsia-500 to-purple-500" },
   { name: "Compare", icon: GitCompare, page: "Compare", gradient: "from-cyan-500 to-blue-500" },
   { name: "Config", icon: Settings, page: "DocumentTypeConfiguration", gradient: "from-slate-500 to-gray-500", adminOnly: true },

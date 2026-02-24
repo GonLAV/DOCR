@@ -59,12 +59,12 @@ import ExternalSources from './pages/ExternalSources';
 import Features from './pages/Features';
 import Pipeline from './pages/Pipeline';
 import ProcessingWorkflow from './pages/ProcessingWorkflow';
+import ReportGeneration from './pages/ReportGeneration';
 import SystemDesign from './pages/SystemDesign';
 import Upload from './pages/Upload';
 import Vision from './pages/Vision';
 import WorkflowMonitoring from './pages/WorkflowMonitoring';
 import Workflows from './pages/Workflows';
-import ReportGeneration from './pages/ReportGeneration';
 import __Layout from './Layout.jsx';
 
 
@@ -81,12 +81,12 @@ export const PAGES = {
     "Features": Features,
     "Pipeline": Pipeline,
     "ProcessingWorkflow": ProcessingWorkflow,
+    "ReportGeneration": ReportGeneration,
     "SystemDesign": SystemDesign,
     "Upload": Upload,
     "Vision": Vision,
     "WorkflowMonitoring": WorkflowMonitoring,
     "Workflows": Workflows,
-    "ReportGeneration": ReportGeneration,
 }
 
 export const pagesConfig = {

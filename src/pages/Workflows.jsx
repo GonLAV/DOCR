@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import WorkflowBuilder from "@/components/workflow/WorkflowBuilder";
+import WorkflowVersionManager from "@/components/workflow/WorkflowVersionManager";
 
 export default function Workflows() {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -68,6 +69,12 @@ export default function Workflows() {
               setSelectedWorkflow(null);
             }}
           />
+          {selectedWorkflow && (
+            <WorkflowVersionManager 
+              workflowId={selectedWorkflow.id} 
+              currentWorkflow={selectedWorkflow}
+            />
+          )}
         </div>
       </div>
     );

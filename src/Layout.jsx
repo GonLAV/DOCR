@@ -13,7 +13,8 @@ import {
   Sparkles,
   Zap,
   BarChart3,
-  Activity
+  Activity,
+  FileText
 } from "lucide-react";
 import { motion } from "framer-motion";
 import ParticleBackground from "@/components/effects/ParticleBackground";

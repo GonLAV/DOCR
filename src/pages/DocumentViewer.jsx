@@ -141,7 +141,9 @@ export default function DocumentViewer() {
       {/* Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Document Preview */}
-        <div className="flex-1 bg-slate-100/50 p-6 overflow-auto flex items-start justify-center">
+        <div ref={docContainerRef} className="flex-1 bg-slate-100/50 p-6 overflow-auto flex items-start justify-center relative">
+          {/* Collaborative Cursors */}
+          {docId && <CollaborativeCursors documentId={docId} containerRef={docContainerRef} />}
           <div className="relative max-w-4xl w-full">
             {activeLayers.includes("original") && document.original_file_url && (
               <div className="layer-original">

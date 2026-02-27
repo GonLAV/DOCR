@@ -145,6 +145,13 @@ export default function Layout({ children, currentPageName }) {
           })}
         </nav>
 
+        {/* Onboarding Progress */}
+        {user && !collapsed && (
+          <div className="px-3 pb-2">
+            <OnboardingProgressWidget user={user} />
+          </div>
+        )}
+
         {/* Theme & Settings */}
         <div className="p-4 border-t border-slate-700/30 space-y-2">
           <div className="flex items-center justify-center gap-2">
@@ -179,6 +186,9 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </div>
       </main>
+
+      {/* Onboarding Tour - Global */}
+      {user && <OnboardingTour user={user} currentPageName={currentPageName} />}
     </div>
   );
 }

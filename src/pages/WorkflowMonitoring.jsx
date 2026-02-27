@@ -25,6 +25,15 @@ import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
 export default function WorkflowMonitoring() {
+  const { permissions } = useUser();
+  return (
+    <PermissionGate allowed={permissions.canViewWorkflowMonitor}>
+      <WorkflowMonitoringContent />
+    </PermissionGate>
+  );
+}
+
+function WorkflowMonitoringContent() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();

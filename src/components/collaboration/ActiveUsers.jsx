@@ -1,71 +1,67 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-import { Users, Eye } from "lucide-react";
+import { Users, Eye, Wifi } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const CURSOR_COLORS = [
+  "#3b82f6", "#8b5cf6", "#ec4899", "#10b981",
+  "#f59e0b", "#ef4444", "#06b6d4", "#84cc16"
+];
+
+function getColorForUser(email) {
+  let hash = 0;
+  for (let i = 0; i < email.length; i++) hash = email.charCodeAt(i) + ((hash << 5) - hash);
+  return CURSOR_COLORS[Math.abs(hash) % CURSOR_COLORS.length];
+}
+
 export default function ActiveUsers({ document }) {
-  const [activeUsers, setActiveUsers] = useState([]);
+  const queryClient = useQueryClient();
 
   const { data: currentUser } = useQuery({
     queryKey: ["currentUser"],
     queryFn: () => base44.auth.me()
   });
 
-  // Simulate active presence tracking through recent activity
-  const { data: recentComments = [] } = useQuery({
-    queryKey: ["recent-comments", document.id],
+  const { data: activePresence = [] } = useQuery({
+    queryKey: ["presence", document.id],
     queryFn: async () => {
-      const comments = await base44.entities.DocumentComment.filter({ 
-        document_id: document.id 
-      }, "-created_date", 10);
-      return comments;
-    },
-    refetchInterval: 5000 // Refresh every 5 seconds
-  });
-
-  const { data: recentAnnotations = [] } = useQuery({
-    queryKey: ["recent-annotations", document.id],
-    queryFn: async () => {
-      const annotations = await base44.entities.DocumentAnnotation.filter({ 
-        document_id: document.id 
-      }, "-created_date", 10);
-      return annotations;
+      const cutoff = new Date(Date.now() - 15000).toISOString();
+      const all = await base44.entities.DocumentPresence.filter({ document_id: document.id });
+      return all.filter(p => p.last_seen > cutoff && p.is_active);
     },
     refetchInterval: 5000
   });
 
+  // Real-time subscription
   useEffect(() => {
-    // Combine recent activity to detect active users (within last 5 minutes)
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    
-    const users = new Map();
-    
-    [...recentComments, ...recentAnnotations].forEach(item => {
-      const createdDate = new Date(item.created_date);
-      if (createdDate > fiveMinutesAgo && item.user_email) {
-        if (!users.has(item.user_email)) {
-          users.set(item.user_email, {
-            email: item.user_email,
-            name: item.user_name || item.user_email.split("@")[0],
-            lastActivity: createdDate
-          });
-        } else {
-          const existing = users.get(item.user_email);
-          if (createdDate > existing.lastActivity) {
-            existing.lastActivity = createdDate;
-          }
-        }
-      }
+    const unsub = base44.entities.DocumentPresence.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ["presence", document.id] });
     });
+    return unsub;
+  }, [document.id, queryClient]);
 
-    setActiveUsers(Array.from(users.values()));
-  }, [recentComments, recentAnnotations]);
+  // Count including current user
+  const totalCount = activePresence.length;
 
-  if (activeUsers.length === 0) {
-    return null;
-  }
+  if (totalCount === 0 && !currentUser) return null;
+
+  const allUsers = currentUser
+    ? [
+        // Put current user first if not in presence list
+        ...(activePresence.find(p => p.user_email === currentUser.email) ? [] : [{
+          user_email: currentUser.email,
+          user_name: currentUser.full_name || currentUser.email.split("@")[0],
+          color: getColorForUser(currentUser.email),
+          isCurrentUser: true
+        }]),
+        ...activePresence.map(p => ({
+          ...p,
+          isCurrentUser: p.user_email === currentUser.email
+        }))
+      ]
+    : activePresence;
 
   return (
     <motion.div
@@ -80,52 +76,50 @@ export default function ActiveUsers({ document }) {
             <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
           </div>
           <span className="text-sm font-semibold text-gray-100">
-            {activeUsers.length} Active Now
+            {allUsers.length} Collaborator{allUsers.length !== 1 ? "s" : ""} Active
           </span>
         </div>
-        <Badge className="bg-emerald-500/20 text-emerald-300 text-xs">
-          <Eye className="w-3 h-3 mr-1" />
-          Live
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge className="bg-emerald-500/20 text-emerald-300 text-xs">
+            <Wifi className="w-3 h-3 mr-1" />
+            Live
+          </Badge>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 mt-3 flex-wrap">
         <AnimatePresence>
-          {activeUsers.map((user, index) => (
-            <motion.div
-              key={user.email}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ delay: index * 0.05 }}
-              className="group relative"
-            >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center ring-2 ring-emerald-400/30 hover:ring-emerald-400/60 transition-all cursor-pointer">
-                <span className="text-white text-xs font-bold">
-                  {user.name[0]?.toUpperCase()}
-                </span>
-              </div>
-              
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 rounded-lg text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                {user.name}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900" />
-              </div>
-            </motion.div>
-          ))}
+          {allUsers.map((user, index) => {
+            const color = user.color || getColorForUser(user.user_email);
+            const initials = (user.user_name || user.user_email)?.[0]?.toUpperCase() || "?";
+            return (
+              <motion.div
+                key={user.user_email}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ delay: index * 0.05 }}
+                className="group relative"
+              >
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center ring-2 ring-white/20 hover:ring-white/50 transition-all cursor-pointer"
+                  style={{ backgroundColor: color }}
+                >
+                  <span className="text-white text-xs font-bold">{initials}</span>
+                </div>
+                {user.isCurrentUser && (
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border border-white/50" />
+                )}
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 rounded-lg text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  {user.user_name || user.user_email.split("@")[0]}
+                  {user.isCurrentUser && " (you)"}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900" />
+                </div>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
-        
-        {currentUser && !activeUsers.find(u => u.email === currentUser.email) && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center ring-2 ring-blue-400/30"
-          >
-            <span className="text-white text-xs font-bold">
-              {currentUser.full_name?.[0]?.toUpperCase() || "Y"}
-            </span>
-          </motion.div>
-        )}
       </div>
     </motion.div>
   );

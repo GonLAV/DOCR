@@ -20,6 +20,8 @@ import { motion } from "framer-motion";
 import ParticleBackground from "@/components/effects/ParticleBackground";
 import NotificationCenter from "@/components/notifications/NotificationCenter";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import OnboardingTour from "@/components/onboarding/OnboardingTour";
+import OnboardingProgressWidget from "@/components/onboarding/OnboardingProgress";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard", gradient: "from-blue-500 to-cyan-500" },

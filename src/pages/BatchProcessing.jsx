@@ -29,6 +29,15 @@ import BatchStatusCard from "@/components/batch/BatchStatusCard";
 import BatchHistoryTable from "@/components/batch/BatchHistoryTable";
 
 export default function BatchProcessing() {
+  const { permissions } = useUser();
+  return (
+    <PermissionGate allowed={permissions.canViewBatchProcessing}>
+      <BatchProcessingContent />
+    </PermissionGate>
+  );
+}
+
+function BatchProcessingContent() {
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [actionType, setActionType] = useState("revalidate");
   const [jobName, setJobName] = useState("");

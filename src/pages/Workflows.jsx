@@ -217,6 +217,7 @@ function WorkflowsContent() {
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {permissions.canEditWorkflows && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -225,6 +226,7 @@ function WorkflowsContent() {
                     >
                       <Edit className="w-4 h-4" />
                     </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="ghost"

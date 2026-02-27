@@ -14,7 +14,9 @@ import {
   Zap,
   BarChart3,
   Activity,
-  FileText
+  FileText,
+  Crown,
+  Shield
 } from "lucide-react";
 import { motion } from "framer-motion";
 import ParticleBackground from "@/components/effects/ParticleBackground";
@@ -22,24 +24,27 @@ import NotificationCenter from "@/components/notifications/NotificationCenter";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import OnboardingTour from "@/components/onboarding/OnboardingTour";
 import OnboardingProgressWidget from "@/components/onboarding/OnboardingProgress";
+import { getPermissions } from "@/components/auth/permissions";
 
+// permKey maps to a permission flag from getPermissions()
 const navItems = [
-  { name: "Upload", icon: Upload, page: "Upload", gradient: "from-pink-500 to-rose-500" },
-  { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard", gradient: "from-blue-500 to-cyan-500" },
-  { name: "Processing Workflow", icon: Workflow, page: "ProcessingWorkflow", gradient: "from-indigo-500 to-purple-500" },
-  { name: "Workflows", icon: GitCompare, page: "Workflows", gradient: "from-violet-500 to-purple-500" },
-  { name: "Workflow Monitor", icon: Activity, page: "WorkflowMonitoring", gradient: "from-cyan-500 to-teal-500" },
-  { name: "Vision", icon: Sparkles, page: "Vision", gradient: "from-purple-500 to-pink-500" },
-  { name: "System Design", icon: Layers, page: "SystemDesign", gradient: "from-indigo-500 to-purple-500" },
-  { name: "Features", icon: Zap, page: "Features", gradient: "from-emerald-500 to-teal-500" },
-  { name: "Pipeline", icon: Workflow, page: "Pipeline", gradient: "from-orange-500 to-red-500" },
-  { name: "Documents", icon: FileSearch, page: "Documents", gradient: "from-violet-500 to-purple-500" },
-  { name: "Analytics", icon: BarChart3, page: "Analytics", gradient: "from-amber-500 to-orange-500" },
-  { name: "Reports", icon: FileText, page: "ReportGeneration", gradient: "from-rose-500 to-pink-500" },
-  { name: "Batch Processing", icon: Settings, page: "BatchProcessing", gradient: "from-fuchsia-500 to-purple-500" },
-  { name: "Compare", icon: GitCompare, page: "Compare", gradient: "from-cyan-500 to-blue-500" },
-  { name: "Config", icon: Settings, page: "DocumentTypeConfiguration", gradient: "from-slate-500 to-gray-500", adminOnly: true },
-  { name: "External Sources", icon: Settings, page: "ExternalSources", gradient: "from-teal-500 to-emerald-500", adminOnly: true },
+  { name: "Upload",             icon: Upload,         page: "Upload",                   gradient: "from-pink-500 to-rose-500" },
+  { name: "Dashboard",          icon: LayoutDashboard,page: "Dashboard",                gradient: "from-blue-500 to-cyan-500" },
+  { name: "Documents",          icon: FileSearch,     page: "Documents",                gradient: "from-violet-500 to-purple-500" },
+  { name: "Workflows",          icon: GitCompare,     page: "Workflows",                gradient: "from-violet-500 to-purple-500",  permKey: "canViewWorkflows" },
+  { name: "Workflow Monitor",   icon: Activity,       page: "WorkflowMonitoring",       gradient: "from-cyan-500 to-teal-500",     permKey: "canViewWorkflowMonitor" },
+  { name: "Analytics",          icon: BarChart3,      page: "Analytics",                gradient: "from-amber-500 to-orange-500",  permKey: "canViewAnalytics" },
+  { name: "Reports",            icon: FileText,       page: "ReportGeneration",         gradient: "from-rose-500 to-pink-500",     permKey: "canViewReports" },
+  { name: "Batch Processing",   icon: Settings,       page: "BatchProcessing",          gradient: "from-fuchsia-500 to-purple-500",permKey: "canViewBatchProcessing" },
+  { name: "Compare",            icon: GitCompare,     page: "Compare",                  gradient: "from-cyan-500 to-blue-500",     permKey: "canViewCompare" },
+  { name: "Vision",             icon: Sparkles,       page: "Vision",                   gradient: "from-purple-500 to-pink-500" },
+  { name: "Features",           icon: Zap,            page: "Features",                 gradient: "from-emerald-500 to-teal-500" },
+  { name: "Processing Workflow",icon: Workflow,       page: "ProcessingWorkflow",       gradient: "from-indigo-500 to-purple-500" },
+  // Admin-only
+  { name: "Pipeline",           icon: Workflow,       page: "Pipeline",                 gradient: "from-orange-500 to-red-500",    permKey: "canViewPipeline" },
+  { name: "System Design",      icon: Layers,         page: "SystemDesign",             gradient: "from-indigo-500 to-purple-500", permKey: "canViewSystemDesign" },
+  { name: "Config",             icon: Settings,       page: "DocumentTypeConfiguration",gradient: "from-slate-500 to-gray-500",    permKey: "canViewDocumentTypeConfig" },
+  { name: "External Sources",   icon: Settings,       page: "ExternalSources",          gradient: "from-teal-500 to-emerald-500",  permKey: "canViewExternalSources" },
 ];
 
 export default function Layout({ children, currentPageName }) {
@@ -49,6 +54,8 @@ export default function Layout({ children, currentPageName }) {
   React.useEffect(() => {
     base44.auth.me().then(u => setUser(u)).catch(() => {});
   }, []);
+
+  const permissions = getPermissions(user);
 
   return (
     <div className="flex h-screen overflow-hidden relative">

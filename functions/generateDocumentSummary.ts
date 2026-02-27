@@ -59,19 +59,32 @@ Deno.serve(async (req) => {
 
     const config = lengthConfig[length] || lengthConfig.medium;
 
+    const focusInstructions = {
+      general: "Cover all aspects of the document holistically.",
+      key_findings: "Focus primarily on the key findings, conclusions, and critical facts extracted from the document. Emphasize what was discovered or determined.",
+      action_items: "Focus primarily on required actions, next steps, deadlines, obligations, and tasks that need to be completed by any party.",
+      financial_data: "Focus primarily on financial figures, amounts, costs, payments, revenue, budgets, and any monetary data found in the document.",
+      risks: "Focus primarily on risks, anomalies, issues, warnings, compliance concerns, and anything that requires attention or poses a potential problem.",
+      entities_people: "Focus primarily on the people, organizations, dates, locations, and named entities involved in this document."
+    };
+
+    const focusText = focusInstructions[focus] || focusInstructions.general;
+
     // Generate summary using AI
     const summary = await base44.integrations.Core.InvokeLLM({
       prompt: `You are an expert document analyst. Generate a ${config.detail_level} executive summary for the following processed document.
+
+Focus instruction: ${focusText}
 
 Document Data:
 ${JSON.stringify(documentContext, null, 2)}
 
 Generate a summary that includes:
-1. A ${config.overview_sentences} overview of the document
-2. Key entities (top ${config.entities_count} most important extracted fields)
+1. A ${config.overview_sentences} overview of the document (shaped by the focus instruction above)
+2. Key entities (top ${config.entities_count} most important extracted fields, prioritized by the focus)
 3. Confidence level summary (explain the overall confidence and any concerns)
-4. Anomalies summary (if any issues were detected, explain them clearly)
-5. Recommendations (${config.recommendations_count} actionable next steps or items needing attention)
+4. Anomalies summary (if any issues were detected, explain them clearly; "N/A" if none)
+5. Recommendations (${config.recommendations_count} actionable next steps relevant to the focus area)
 
 Keep the language professional, clear, and suitable for executives or legal reviewers.`,
       response_json_schema: {

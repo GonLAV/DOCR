@@ -145,85 +145,107 @@ export default function CommentThread({ document }) {
         </div>
 
         {/* Comment List */}
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
           <AnimatePresence>
-            {topLevelComments.map((comment) => (
-              <motion.div
-                key={comment.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <div className={`glass rounded-xl p-4 border ${
-                  comment.status === "resolved" 
-                    ? "border-emerald-500/20 opacity-60" 
-                    : "border-white/20"
-                }`}>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0">
-                      <span className="text-white text-xs font-bold">
-                        {comment.user_name?.[0]?.toUpperCase() || "?"}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-bold text-white">
-                          {comment.user_name || "Anonymous"}
+            {topLevelComments.map((comment) => {
+              const userColor = getColorForUser(comment.user_email);
+              const replies = getReplies(comment.id);
+              return (
+                <motion.div
+                  key={comment.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className={`glass rounded-xl p-4 border ${
+                    comment.status === "resolved"
+                      ? "border-emerald-500/20 opacity-60"
+                      : "border-white/20"
+                  }`}>
+                    <div className="flex items-start gap-3">
+                      {/* Avatar with user color */}
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 ring-2 ring-white/20"
+                        style={{ backgroundColor: userColor }}
+                      >
+                        <span className="text-white text-xs font-bold">
+                          {comment.user_name?.[0]?.toUpperCase() || "?"}
                         </span>
-                        <span className="text-xs text-gray-400">
-                          <Clock className="w-3 h-3 inline mr-1" />
-                          {format(new Date(comment.created_date), "MMM d, h:mm a")}
-                        </span>
-                        {comment.status === "resolved" && (
-                          <Badge className="bg-emerald-500 text-white text-[10px]">
-                            <Check className="w-3 h-3 mr-1" />
-                            Resolved
-                          </Badge>
-                        )}
                       </div>
-                      <p className="text-sm text-gray-300 leading-relaxed mb-2">
-                        {comment.comment_text}
-                      </p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setReplyTo(comment)}
-                          className="text-xs text-blue-400 hover:text-blue-300"
-                        >
-                          Reply
-                        </button>
-                        {comment.status === "open" && comment.user_email === currentUser?.email && (
-                          <button
-                            onClick={() => resolveCommentMutation.mutate(comment.id)}
-                            className="text-xs text-emerald-400 hover:text-emerald-300"
-                          >
-                            Resolve
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Replies */}
-                      {getReplies(comment.id).length > 0 && (
-                        <div className="mt-3 ml-4 pl-4 border-l border-white/10 space-y-2">
-                          {getReplies(comment.id).map((reply) => (
-                            <div key={reply.id} className="glass rounded-lg p-3">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-bold text-white">
-                                  {reply.user_name}
-                                </span>
-                                <span className="text-[10px] text-gray-400">
-                                  {format(new Date(reply.created_date), "MMM d, h:mm a")}
-                                </span>
-                              </div>
-                              <p className="text-xs text-gray-300">{reply.comment_text}</p>
-                            </div>
-                          ))}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="text-sm font-bold" style={{ color: userColor }}>
+                            {comment.user_name || "Anonymous"}
+                            {comment.user_email === currentUser?.email && (
+                              <span className="text-gray-500 font-normal ml-1 text-xs">(you)</span>
+                            )}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            <Clock className="w-3 h-3 inline mr-1" />
+                            {format(new Date(comment.created_date), "MMM d, h:mm a")}
+                          </span>
+                          {comment.status === "resolved" && (
+                            <Badge className="bg-emerald-500 text-white text-[10px]">
+                              <Check className="w-3 h-3 mr-1" />
+                              Resolved
+                            </Badge>
+                          )}
                         </div>
-                      )}
+                        <p className="text-sm text-gray-300 leading-relaxed mb-2">
+                          {comment.comment_text}
+                        </p>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => setReplyTo(comment)}
+                            className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                          >
+                            <Reply className="w-3 h-3" /> Reply
+                          </button>
+                          {comment.status === "open" && comment.user_email === currentUser?.email && (
+                            <button
+                              onClick={() => resolveCommentMutation.mutate(comment.id)}
+                              className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                            >
+                              <Check className="w-3 h-3" /> Resolve
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Replies */}
+                        {replies.length > 0 && (
+                          <div className="mt-3 ml-2 pl-4 border-l-2 space-y-2" style={{ borderColor: userColor + "50" }}>
+                            {replies.map((reply) => {
+                              const replyColor = getColorForUser(reply.user_email);
+                              return (
+                                <div key={reply.id} className="glass rounded-lg p-3">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <div
+                                      className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                                      style={{ backgroundColor: replyColor }}
+                                    >
+                                      <span className="text-white text-[9px] font-bold">
+                                        {reply.user_name?.[0]?.toUpperCase() || "?"}
+                                      </span>
+                                    </div>
+                                    <span className="text-xs font-bold" style={{ color: replyColor }}>
+                                      {reply.user_name}
+                                    </span>
+                                    <span className="text-[10px] text-gray-400">
+                                      {format(new Date(reply.created_date), "MMM d, h:mm a")}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-gray-300 pl-7">{reply.comment_text}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
           {comments.length === 0 && (
             <div className="text-center py-8">
@@ -231,6 +253,7 @@ export default function CommentThread({ document }) {
               <p className="text-sm text-gray-400">No comments yet. Start the discussion!</p>
             </div>
           )}
+          <div ref={bottomRef} />
         </div>
       </CardContent>
     </Card>

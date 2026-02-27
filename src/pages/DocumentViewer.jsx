@@ -39,6 +39,7 @@ export default function DocumentViewer() {
 
   const [activeLayers, setActiveLayers] = useState(["original"]);
   const [activeTab, setActiveTab] = useState("entities");
+  const docContainerRef = React.useRef(null);
 
   const { data: document, isLoading } = useQuery({
     queryKey: ["document", docId],

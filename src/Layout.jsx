@@ -159,6 +159,26 @@ export default function Layout({ children, currentPageName }) {
           </div>
         )}
 
+        {/* User role badge */}
+        {user && !collapsed && (
+          <div className="px-4 pb-2">
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold ${
+              permissions.isAdmin
+                ? "bg-violet-500/20 border border-violet-500/30 text-violet-300"
+                : permissions.hasFullAccess
+                  ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300"
+                  : "bg-slate-700/40 border border-slate-600/30 text-slate-400"
+            }`}>
+              {permissions.isAdmin
+                ? <><Shield className="w-3.5 h-3.5" /> Admin</>
+                : permissions.hasFullAccess
+                  ? <><Crown className="w-3.5 h-3.5" /> Full Access</>
+                  : <><Zap className="w-3.5 h-3.5" /> Free · {permissions.remainingCredits} credit{permissions.remainingCredits !== 1 ? "s" : ""}</>
+              }
+            </div>
+          </div>
+        )}
+
         {/* Theme & Settings */}
         <div className="p-4 border-t border-slate-700/30 space-y-2">
           <div className="flex items-center justify-center gap-2">

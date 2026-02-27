@@ -24,6 +24,7 @@ import OnboardingTour from "@/components/onboarding/OnboardingTour";
 import OnboardingProgressWidget from "@/components/onboarding/OnboardingProgress";
 
 const navItems = [
+  { name: "Upload", icon: Upload, page: "Upload", gradient: "from-pink-500 to-rose-500" },
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard", gradient: "from-blue-500 to-cyan-500" },
   { name: "Processing Workflow", icon: Workflow, page: "ProcessingWorkflow", gradient: "from-indigo-500 to-purple-500" },
   { name: "Workflows", icon: GitCompare, page: "Workflows", gradient: "from-violet-500 to-purple-500" },
@@ -32,7 +33,6 @@ const navItems = [
   { name: "System Design", icon: Layers, page: "SystemDesign", gradient: "from-indigo-500 to-purple-500" },
   { name: "Features", icon: Zap, page: "Features", gradient: "from-emerald-500 to-teal-500" },
   { name: "Pipeline", icon: Workflow, page: "Pipeline", gradient: "from-orange-500 to-red-500" },
-  { name: "Upload", icon: Upload, page: "Upload", gradient: "from-pink-500 to-rose-500" },
   { name: "Documents", icon: FileSearch, page: "Documents", gradient: "from-violet-500 to-purple-500" },
   { name: "Analytics", icon: BarChart3, page: "Analytics", gradient: "from-amber-500 to-orange-500" },
   { name: "Reports", icon: FileText, page: "ReportGeneration", gradient: "from-rose-500 to-pink-500" },

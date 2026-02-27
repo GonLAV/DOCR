@@ -104,6 +104,7 @@ export default function WorkflowOptimizationPanel({ workflowId }) {
             <CardTitle className="text-gray-100 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-purple-400" />
               AI Optimization Insights
+              <ContextualHelp topic="ai_optimization" />
             </CardTitle>
             <Button
               size="sm"

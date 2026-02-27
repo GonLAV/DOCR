@@ -115,6 +115,7 @@ export default function WorkflowVersionManager({ workflowId, currentWorkflow }) 
           <div className="flex items-center gap-2">
             <GitBranch className="w-5 h-5 text-purple-400" />
             <span>Version Control</span>
+            <ContextualHelp topic="version_control" />
           </div>
           <Button
             size="sm"

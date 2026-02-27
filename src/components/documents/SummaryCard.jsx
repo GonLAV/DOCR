@@ -112,15 +112,25 @@ export default function SummaryCard({ summary, documentId }) {
               Generated {new Date(summary.generated_at).toLocaleDateString()}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Select value={summaryLength} onValueChange={setSummaryLength}>
-              <SelectTrigger className="bg-slate-800/50 border-slate-700/40 text-gray-100 h-7 text-[10px] w-24">
+              <SelectTrigger className="bg-slate-800/50 border-slate-700/40 text-gray-100 h-7 text-[10px] w-20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="short">Short</SelectItem>
                 <SelectItem value="medium">Medium</SelectItem>
                 <SelectItem value="detailed">Detailed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={summaryFocus} onValueChange={setSummaryFocus}>
+              <SelectTrigger className="bg-slate-800/50 border-slate-700/40 text-gray-100 h-7 text-[10px] w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {FOCUS_OPTIONS.map(o => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Button

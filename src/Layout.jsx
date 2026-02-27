@@ -96,8 +96,8 @@ export default function Layout({ children, currentPageName }) {
         {/* Navigation */}
         <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
             {navItems.map((item, index) => {
-              // Hide admin-only items for non-admin users
-              if (item.adminOnly && user?.role !== 'admin') return null;
+              // Hide items the user doesn't have permission to see
+              if (item.permKey && !permissions[item.permKey]) return null;
 
               const isActive = currentPageName === item.page;
               return (

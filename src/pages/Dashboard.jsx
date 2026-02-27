@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { FileText, CheckCircle2, AlertTriangle, Clock, TrendingUp, Zap, Shield, Brain, Plus, Settings as SettingsIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,6 +10,14 @@ import DashboardWidget from "@/components/dashboard/DashboardWidget";
 import WidgetLibrary from "@/components/dashboard/WidgetLibrary";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
+  // Redirect to Upload if no documents yet
+  useEffect(() => {
+    base44.entities.Document.list("-created_date", 1).then(docs => {
+      if (docs.length === 0) navigate(createPageUrl("Upload"));
+    }).catch(() => {});
+  }, []);
   const [customizeMode, setCustomizeMode] = useState(false);
   const [activeWidgets, setActiveWidgets] = useState([
     "documents-overview",

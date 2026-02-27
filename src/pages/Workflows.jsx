@@ -118,10 +118,12 @@ function WorkflowsContent() {
               </p>
             </div>
           </div>
-          <Button onClick={handleNew} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Create Workflow
-          </Button>
+          {permissions.canCreateWorkflows && (
+            <Button onClick={handleNew} className="gap-2">
+              <Plus className="w-4 h-4" />
+              Create Workflow
+            </Button>
+          )}
         </div>
       </motion.div>
 

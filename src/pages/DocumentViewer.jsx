@@ -27,6 +27,7 @@ import CommentThread from "@/components/collaboration/CommentThread";
 import AnnotationTool from "@/components/collaboration/AnnotationTool";
 import VersionHistory from "@/components/collaboration/VersionHistory";
 import ActiveUsers from "@/components/collaboration/ActiveUsers";
+import CollaborativeCursors from "@/components/collaboration/CollaborativeCursors";
 import AccessControlPanel from "@/components/access/AccessControlPanel";
 import AuditTrailViewer from "@/components/audit/AuditTrailViewer";
 import DocumentClassificationCard from "@/components/ai/DocumentClassificationCard";

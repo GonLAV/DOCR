@@ -25,6 +25,16 @@ import WorkflowOptimizationPanel from "@/components/workflow/WorkflowOptimizatio
 import AILearningPanel from "@/components/workflow/AILearningPanel";
 
 export default function Workflows() {
+  const { permissions } = useUser();
+  return (
+    <PermissionGate allowed={permissions.canViewWorkflows}>
+      <WorkflowsContent />
+    </PermissionGate>
+  );
+}
+
+function WorkflowsContent() {
+  const { permissions } = useUser();
   const [showBuilder, setShowBuilder] = useState(false);
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
 

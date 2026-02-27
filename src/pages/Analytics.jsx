@@ -19,6 +19,16 @@ import {
 } from "../components/analytics/AnalyticsCharts";
 
 export default function Analytics() {
+  const { permissions } = useUser();
+
+  return (
+    <PermissionGate allowed={permissions.canViewAnalytics}>
+      <AnalyticsContent />
+    </PermissionGate>
+  );
+}
+
+function AnalyticsContent() {
   const [dateRange, setDateRange] = useState({
     start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     end: new Date().toISOString().split('T')[0]

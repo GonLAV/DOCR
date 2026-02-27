@@ -9,15 +9,26 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
+const FOCUS_OPTIONS = [
+  { value: "general",        label: "General Overview" },
+  { value: "key_findings",   label: "Key Findings" },
+  { value: "action_items",   label: "Action Items" },
+  { value: "financial_data", label: "Financial Data" },
+  { value: "risks",          label: "Risks & Issues" },
+  { value: "entities_people","label": "People & Entities" },
+];
+
 export default function SummaryCard({ summary, documentId }) {
   const [summaryLength, setSummaryLength] = useState("medium");
+  const [summaryFocus, setSummaryFocus] = useState("general");
   const queryClient = useQueryClient();
 
   const generateSummaryMutation = useMutation({
     mutationFn: async () => {
       const { data } = await base44.functions.invoke("generateDocumentSummary", {
         document_id: documentId,
-        length: summaryLength
+        length: summaryLength,
+        focus: summaryFocus
       });
       return data;
     },

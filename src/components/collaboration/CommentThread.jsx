@@ -9,10 +9,20 @@ import { MessageSquare, Send, Check, User, Clock, Reply } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 
+const CURSOR_COLORS = ["#3b82f6","#8b5cf6","#ec4899","#10b981","#f59e0b","#ef4444","#06b6d4","#84cc16"];
+function getColorForUser(email) {
+  if (!email) return "#3b82f6";
+  let hash = 0;
+  for (let i = 0; i < email.length; i++) hash = email.charCodeAt(i) + ((hash << 5) - hash);
+  return CURSOR_COLORS[Math.abs(hash) % CURSOR_COLORS.length];
+}
+
 export default function CommentThread({ document }) {
   const queryClient = useQueryClient();
   const [newComment, setNewComment] = useState("");
   const [replyTo, setReplyTo] = useState(null);
+  const bottomRef = useRef(null);
+  const [typingUsers, setTypingUsers] = useState([]);
 
   const { data: comments = [] } = useQuery({
     queryKey: ["comments", document.id],

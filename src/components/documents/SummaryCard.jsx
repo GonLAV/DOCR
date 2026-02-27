@@ -62,6 +62,19 @@ export default function SummaryCard({ summary, documentId }) {
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <label className="text-[10px] text-gray-400 mb-1.5 block">Focus Area</label>
+              <Select value={summaryFocus} onValueChange={setSummaryFocus}>
+                <SelectTrigger className="bg-slate-800/50 border-slate-700/40 text-gray-100 h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {FOCUS_OPTIONS.map(o => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Button
               onClick={() => generateSummaryMutation.mutate()}
               disabled={generateSummaryMutation.isPending}

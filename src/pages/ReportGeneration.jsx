@@ -24,6 +24,15 @@ import { toast } from "sonner";
 import ReportPreview from "@/components/reports/ReportPreview";
 
 export default function ReportGeneration() {
+  const { permissions } = useUser();
+  return (
+    <PermissionGate allowed={permissions.canViewReports}>
+      <ReportGenerationContent />
+    </PermissionGate>
+  );
+}
+
+function ReportGenerationContent() {
   const [reportType, setReportType] = useState("comprehensive");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");

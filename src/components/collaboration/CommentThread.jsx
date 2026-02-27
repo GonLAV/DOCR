@@ -77,9 +77,13 @@ export default function CommentThread({ document }) {
     }
   });
 
+  // Auto-scroll to bottom when new comments arrive
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [comments.length]);
+
   const handleSubmit = () => {
     if (!newComment.trim()) return;
-    
     addCommentMutation.mutate({
       comment_text: newComment,
       parent_comment_id: replyTo?.id || null,

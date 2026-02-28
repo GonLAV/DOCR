@@ -37,6 +37,7 @@ const navItems = [
   { name: "Reports",            icon: FileText,       page: "ReportGeneration",         gradient: "from-rose-500 to-pink-500",     permKey: "canViewReports" },
   { name: "Batch Processing",   icon: Settings,       page: "BatchProcessing",          gradient: "from-fuchsia-500 to-purple-500",permKey: "canViewBatchProcessing" },
   { name: "Compare",            icon: GitCompare,     page: "Compare",                  gradient: "from-cyan-500 to-blue-500",     permKey: "canViewCompare" },
+  { name: "Trigger Rules",      icon: Zap,            page: "TriggerRules",             gradient: "from-amber-500 to-orange-500" },
   { name: "Vision",             icon: Sparkles,       page: "Vision",                   gradient: "from-purple-500 to-pink-500" },
   { name: "Features",           icon: Zap,            page: "Features",                 gradient: "from-emerald-500 to-teal-500" },
   { name: "Processing Workflow",icon: Workflow,       page: "ProcessingWorkflow",       gradient: "from-indigo-500 to-purple-500" },

@@ -79,20 +79,38 @@ Focus instruction: ${focusText}
 Document Data:
 ${JSON.stringify(documentContext, null, 2)}
 
-Generate a summary that includes:
-1. A ${config.overview_sentences} overview of the document (shaped by the focus instruction above)
-2. Key entities (top ${config.entities_count} most important extracted fields, prioritized by the focus)
-3. Confidence level summary (explain the overall confidence and any concerns)
-4. Anomalies summary (if any issues were detected, explain them clearly; "N/A" if none)
-5. Recommendations (${config.recommendations_count} actionable next steps relevant to the focus area)
+Generate a structured summary with ALL of the following sections:
+1. overview: A ${config.overview_sentences} high-level overview of the document (shaped by the focus instruction)
+2. main_points: Top ${config.entities_count} main points / key findings from the document as short bullet strings
+3. key_decisions: Any decisions, agreements, or conclusions documented — empty array if none
+4. action_items: Specific tasks, obligations, or next steps that must be taken by any party — empty array if none. Each item should include WHO must act and WHAT they must do if determinable.
+5. key_entities: Top ${config.entities_count} most important named fields and their values extracted from the document
+6. confidence_summary: Brief explanation of the overall data confidence and reliability
+7. anomalies_summary: Description of issues detected, or "None detected" if clean
+8. recommendations: ${config.recommendations_count} actionable next steps for the reviewer
 
-Keep the language professional, clear, and suitable for executives or legal reviewers.`,
+Keep the language professional, concise, and suitable for executives or legal reviewers.`,
       response_json_schema: {
         type: "object",
         properties: {
           overview: { 
             type: "string",
-            description: "2-3 sentence executive summary"
+            description: "High-level executive overview"
+          },
+          main_points: {
+            type: "array",
+            items: { type: "string" },
+            description: "Top main points / key findings"
+          },
+          key_decisions: {
+            type: "array",
+            items: { type: "string" },
+            description: "Decisions, agreements, or conclusions in the document"
+          },
+          action_items: {
+            type: "array",
+            items: { type: "string" },
+            description: "Specific tasks or obligations that must be actioned"
           },
           key_entities: {
             type: "array",
@@ -103,7 +121,7 @@ Keep the language professional, clear, and suitable for executives or legal revi
                 value: { type: "string" }
               }
             },
-            description: "Top 5 most important extracted entities"
+            description: "Top extracted entities as field-value pairs"
           },
           confidence_summary: {
             type: "string",
@@ -111,12 +129,12 @@ Keep the language professional, clear, and suitable for executives or legal revi
           },
           anomalies_summary: {
             type: "string",
-            description: "Summary of issues or N/A if none"
+            description: "Summary of detected issues or 'None detected'"
           },
           recommendations: {
             type: "array",
             items: { type: "string" },
-            description: "2-3 actionable recommendations"
+            description: "Actionable recommendations for the reviewer"
           }
         }
       }

@@ -71,7 +71,7 @@ function EntityRow({ entity }) {
   );
 }
 
-export default function EntityPanel({ entities, anomalies }) {
+export default function EntityPanel({ entities, anomalies, keyDataPoints, documentClass, classificationTier, classificationRationale }) {
   const [showAll, setShowAll] = useState(false);
 
   const critical = (entities || []).filter(e => e.business_critical);
@@ -80,6 +80,14 @@ export default function EntityPanel({ entities, anomalies }) {
 
   return (
     <div className="space-y-4">
+      {/* Key Data Points (top-level dedicated fields) */}
+      <KeyDataPointsPanel
+        keyDataPoints={keyDataPoints}
+        documentClass={documentClass}
+        classificationTier={classificationTier}
+        classificationRationale={classificationRationale}
+      />
+
       {/* Critical Fields */}
       {critical.length > 0 && (
         <Card className="border-violet-200/60 bg-violet-50/20">

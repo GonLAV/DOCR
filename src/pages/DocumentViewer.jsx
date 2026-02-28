@@ -320,7 +320,14 @@ export default function DocumentViewer() {
                 <TabsTrigger value="audit" className="text-[10px]">Audit</TabsTrigger>
               </TabsList>
               <TabsContent value="entities">
-                <EntityPanel entities={document.extracted_entities} anomalies={document.anomalies} />
+                <EntityPanel
+                  entities={document.extracted_entities}
+                  anomalies={document.anomalies}
+                  keyDataPoints={document.key_data_points}
+                  documentClass={document.document_class}
+                  classificationTier={document.classification_tier}
+                  classificationRationale={document.classification_rationale}
+                />
               </TabsContent>
               <TabsContent value="layers">
                 <LayeredOutputViewer document={document} />

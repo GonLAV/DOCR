@@ -28,6 +28,7 @@ import AIWorkflowGenerator from "@/components/workflow/AIWorkflowGenerator";
 
 export default function WorkflowBuilder({ workflow, onSave }) {
   const queryClient = useQueryClient();
+  const [showAI, setShowAI] = useState(!workflow); // open by default for new workflows
   const [workflowData, setWorkflowData] = useState(workflow || {
     name: "",
     description: "",

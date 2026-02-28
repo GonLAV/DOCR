@@ -49,9 +49,19 @@ export default function DocumentCard({ document }) {
               </Badge>
             </div>
 
-            <div className="flex items-center gap-3 text-[11px] text-slate-400">
+            <div className="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
               {document.document_class && (
-                <span className="capitalize font-medium text-slate-500">{document.document_class}</span>
+                <span className="capitalize font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">{document.document_class}</span>
+              )}
+              {document.classification_tier && (
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                  document.classification_tier === "high" ? "bg-emerald-100 text-emerald-700" :
+                  document.classification_tier === "medium" ? "bg-amber-100 text-amber-700" :
+                  "bg-rose-100 text-rose-700"
+                }`}>
+                  {document.classification_tier === "high" ? "Auto-classified" :
+                   document.classification_tier === "medium" ? "Review suggested" : "Manual review"}
+                </span>
               )}
               {document.created_date && (
                 <span>{format(new Date(document.created_date), "MMM d, yyyy")}</span>

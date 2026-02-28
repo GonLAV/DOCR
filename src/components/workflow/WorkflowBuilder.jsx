@@ -328,6 +328,27 @@ export default function WorkflowBuilder({ workflow, onSave }) {
         </CardContent>
       </Card>
 
+      {/* AI Optimization Analyzer — only for existing/populated workflows */}
+      {workflowData.steps.length > 0 && (
+        <Card className="border border-amber-500/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-gray-100 flex items-center gap-2 text-sm font-bold">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              AI Optimization Advisor
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <WorkflowAnalyzer
+              workflowData={workflowData}
+              executionStats={workflow ? { execution_count: workflow.execution_count, last_execution: workflow.last_execution } : null}
+              onApplySuggestion={handleApplySuggestion}
+            />
+          </CardContent>
+        </Card>
+      )}
+
       {/* Completion Actions */}
       <Card>
         <CardHeader>

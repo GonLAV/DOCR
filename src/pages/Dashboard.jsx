@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import DashboardWidget from "@/components/dashboard/DashboardWidget";
 import WidgetLibrary from "@/components/dashboard/WidgetLibrary";
+import AILearningStatus from "@/components/dashboard/AILearningStatus";
 
 export default function Dashboard() {
   const navigate = useNavigate();

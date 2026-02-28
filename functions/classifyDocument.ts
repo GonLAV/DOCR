@@ -1,13 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
-// Confidence-based category tiers
 function getConfidenceTier(confidence) {
-  if (confidence >= 85) return { tier: "high", label: "High Confidence", color: "emerald" };
-  if (confidence >= 60) return { tier: "medium", label: "Review Suggested", color: "amber" };
-  return { tier: "low", label: "Manual Review Required", color: "rose" };
+  if (confidence >= 85) return "high";
+  if (confidence >= 60) return "medium";
+  return "low";
 }
 
-// Built-in classification categories (used when no config is set up)
 const DEFAULT_CATEGORIES = [
   { name: "contract", description: "Legal contracts, service agreements, licensing agreements, NDAs, SLAs" },
   { name: "invoice", description: "Bills, invoices, payment requests, receipts, credit notes" },
@@ -22,78 +20,51 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { document_id } = await req.json();
-    if (!document_id) {
-      return Response.json({ error: 'Missing document_id' }, { status: 400 });
-    }
+    if (!document_id) return Response.json({ error: 'Missing document_id' }, { status: 400 });
 
     const documents = await base44.entities.Document.list();
     const document = documents.find(d => d.id === document_id);
-    if (!document) {
-      return Response.json({ error: 'Document not found' }, { status: 404 });
-    }
+    if (!document) return Response.json({ error: 'Document not found' }, { status: 404 });
 
-    // Load custom config or fall back to built-in categories
     const configs = await base44.entities.DocumentClassificationConfig.list();
-    const config = configs[0];
-    const categories = config?.categories?.length ? config.categories : DEFAULT_CATEGORIES;
-
-    const categoriesList = categories.map(cat => `- ${cat.name}: ${cat.description}`).join('\n');
+    const categories = configs[0]?.categories?.length ? configs[0].categories : DEFAULT_CATEGORIES;
 
     const classification = await base44.integrations.Core.InvokeLLM({
       prompt: `You are an expert document classification specialist. Classify the following document.
 
 Available categories:
-${categoriesList}
+${categories.map(c => `- ${c.name}: ${c.description}`).join('\n')}
 
-Document Information:
+Document:
 - Title: ${document.title}
 - File Type: ${document.file_type || 'unknown'}
-- Content Preview (first 1500 chars): ${document.extracted_text?.substring(0, 1500) || "(no text)"}
-- Existing extracted entities: ${JSON.stringify(document.extracted_entities?.slice(0, 5) || [])}
+- Content Preview: ${document.extracted_text?.substring(0, 1500) || "(no text)"}
 
-Instructions:
-1. Assign the single best-matching category.
-2. Give a confidence score 0-100 reflecting how certain you are.
-3. List up to 3 alternative categories with confidence scores.
-4. List the specific text indicators that drove your classification decision.
-5. Provide a one-sentence rationale.`,
+Return:
+1. The single best-matching category name (must exactly match one of the names above).
+2. Confidence 0-100.
+3. A one-sentence rationale explaining your decision.
+4. Up to 3 alternative categories with confidence scores.
+5. The specific text indicators that drove your choice.`,
       response_json_schema: {
         type: "object",
         properties: {
-          category: { type: "string", description: "Best matching category name" },
-          confidence: { type: "number", description: "Confidence 0-100" },
-          rationale: { type: "string", description: "One sentence explanation" },
-          alternatives: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                category: { type: "string" },
-                confidence: { type: "number" }
-              }
-            }
-          },
-          indicators: {
-            type: "array",
-            items: { type: "string" },
-            description: "Text indicators that drove the classification"
-          }
+          category: { type: "string" },
+          confidence: { type: "number" },
+          rationale: { type: "string" },
+          alternatives: { type: "array", items: { type: "object", properties: { category: { type: "string" }, confidence: { type: "number" } } } },
+          indicators: { type: "array", items: { type: "string" } }
         }
       }
     });
 
-    const confidenceTier = getConfidenceTier(classification.confidence || 0);
-
     const classificationData = {
       document_class: classification.category,
       classification_confidence: classification.confidence,
-      classification_tier: confidenceTier.tier,
+      classification_tier: getConfidenceTier(classification.confidence || 0),
       classification_rationale: classification.rationale,
       classification_indicators: classification.indicators,
       alternative_classifications: classification.alternatives
@@ -107,21 +78,12 @@ Instructions:
       action: "update",
       user_email: user.email,
       timestamp: new Date().toISOString(),
-      changes: {
-        classification: classification.category,
-        confidence: classification.confidence,
-        tier: confidenceTier.tier
-      }
+      changes: { classification: classification.category, confidence: classification.confidence, tier: classificationData.classification_tier }
     });
 
-    return Response.json({
-      success: true,
-      classification: classificationData,
-      confidence_tier: confidenceTier
-    });
+    return Response.json({ success: true, classification: classificationData });
 
   } catch (error) {
-    console.error('Classification error:', error);
     return Response.json({ error: 'Classification failed', details: error.message }, { status: 500 });
   }
 });

@@ -306,6 +306,7 @@ export default function DocumentViewer() {
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full bg-slate-100 mb-4 grid grid-cols-5 h-auto">
+                <TabsTrigger value="summary" className="text-[10px]">✦ Summary</TabsTrigger>
                 <TabsTrigger value="entities" className="text-[10px]">Entities</TabsTrigger>
                 <TabsTrigger value="layers" className="text-[10px]">6 Layers</TabsTrigger>
                 <TabsTrigger value="handwriting" className="text-[10px]">Handwriting</TabsTrigger>
@@ -318,6 +319,9 @@ export default function DocumentViewer() {
                 <TabsTrigger value="access" className="text-[10px]">Access</TabsTrigger>
                 <TabsTrigger value="audit" className="text-[10px]">Audit</TabsTrigger>
               </TabsList>
+              <TabsContent value="summary">
+                <SummaryCard summary={document.ai_summary} documentId={document.id} />
+              </TabsContent>
               <TabsContent value="entities">
                 <EntityPanel
                   entities={document.extracted_entities}

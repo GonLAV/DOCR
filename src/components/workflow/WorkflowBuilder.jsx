@@ -104,8 +104,40 @@ export default function WorkflowBuilder({ workflow, onSave }) {
     approval: AlertCircle
   };
 
+  const handleAIApply = (generated) => {
+    setWorkflowData(prev => ({ ...prev, ...generated }));
+    setShowAI(false);
+  };
+
   return (
     <div className="space-y-6">
+      {/* AI Generator Panel */}
+      <Card className="border border-violet-500/30 glass-strong">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-bold">AI Workflow Builder</span>
+            </div>
+            <button onClick={() => setShowAI(v => !v)} className="text-slate-400 hover:text-slate-200 transition-colors">
+              {showAI ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+          </CardTitle>
+        </CardHeader>
+        <AnimatePresence initial={false}>
+          {showAI && (
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} style={{ overflow: "hidden" }}>
+              <CardContent className="pt-0">
+                <p className="text-xs text-slate-400 mb-3">Describe your workflow in plain English and let AI generate the steps and conditions for you.</p>
+                <AIWorkflowGenerator onApply={handleAIApply} />
+              </CardContent>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Card>
+
       {/* Workflow Header */}
       <Card>
         <CardHeader>

@@ -65,6 +65,7 @@ import Upload from './pages/Upload';
 import Vision from './pages/Vision';
 import WorkflowMonitoring from './pages/WorkflowMonitoring';
 import Workflows from './pages/Workflows';
+import TriggerRules from './pages/TriggerRules';
 import __Layout from './Layout.jsx';
 
 
@@ -87,6 +88,7 @@ export const PAGES = {
     "Vision": Vision,
     "WorkflowMonitoring": WorkflowMonitoring,
     "Workflows": Workflows,
+    "TriggerRules": TriggerRules,
 }
 
 export const pagesConfig = {

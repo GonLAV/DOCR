@@ -15,12 +15,16 @@ import {
   Webhook,
   UserPlus,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
+import AIWorkflowGenerator from "@/components/workflow/AIWorkflowGenerator";
 
 export default function WorkflowBuilder({ workflow, onSave }) {
   const queryClient = useQueryClient();

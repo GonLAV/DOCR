@@ -273,7 +273,6 @@ export default function DocumentViewer() {
               <div className="mb-4 space-y-4">
                 <DocumentClassificationCard document={document} />
                 <AnomalyDetectionPanel document={document} />
-                <SummaryCard summary={document.ai_summary} documentId={document.id} />
               </div>
             )}
 

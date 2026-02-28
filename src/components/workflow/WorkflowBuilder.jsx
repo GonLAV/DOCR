@@ -25,6 +25,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import AIWorkflowGenerator from "@/components/workflow/AIWorkflowGenerator";
+import WorkflowAnalyzer from "@/components/workflow/WorkflowAnalyzer";
 
 export default function WorkflowBuilder({ workflow, onSave }) {
   const queryClient = useQueryClient();

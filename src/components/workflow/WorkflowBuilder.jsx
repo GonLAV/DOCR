@@ -110,6 +110,16 @@ export default function WorkflowBuilder({ workflow, onSave }) {
     setShowAI(false);
   };
 
+  const handleApplySuggestion = ({ step_name, change_field, new_value }) => {
+    if (!step_name || !change_field) return;
+    setWorkflowData(prev => ({
+      ...prev,
+      steps: prev.steps.map(s =>
+        s.name === step_name ? { ...s, [change_field]: new_value } : s
+      )
+    }));
+  };
+
   return (
     <div className="space-y-6">
       {/* AI Generator Panel */}

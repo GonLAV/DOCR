@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Lightbulb, Star, Calendar, DollarSign, User, FileText, ChevronDown, ChevronUp } from "lucide-react";
+import KeyDataPointsPanel from "./KeyDataPointsPanel";
 
 const DATA_TYPE_ICONS = {
   date: Calendar,

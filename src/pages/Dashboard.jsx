@@ -468,6 +468,9 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* AI Learning Engine */}
+          <AILearningStatus />
+
           {/* Quick Actions */}
           <div className="glass-strong rounded-3xl p-6">
             <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
